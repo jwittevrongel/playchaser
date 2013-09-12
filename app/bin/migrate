@@ -69,5 +69,9 @@ switch (command) {
 		}
 		migrationManager.create(migrationName);
 		break;
+    default:
+        console.log('\n***Error: Invalid command "' + command + '"' + '\n');
+		printUsage();
+		break;
 }
 
