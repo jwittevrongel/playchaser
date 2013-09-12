@@ -51,7 +51,7 @@ exports.create = function(migrationName) {
     var fileName = padNumeral(nextOrdinal) + "-" + makeNameFilename(migrationName) + ".js";
 	var absoluteFileName = path.join(absoluteMigrationDirectory, fileName);
 	fs.writeFileSync(absoluteFileName, migrationTemplate, {mode: parseInt('0664', 8)});
-	console.log("New migration created: " + path.join(relativeMigrationDirectory, fileName));
+	console.log("  Created Migration '" + path.join(relativeMigrationDirectory, fileName)); + "'";
 };
 
     
