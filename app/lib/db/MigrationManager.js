@@ -41,17 +41,17 @@ exports.create = function(migrationName) {
         // ignore error creating directory
     }
 
-	var existingMigrationOrdinals = fs.readdirSync(absoluteMigrationDirectory).map(function(filename) {
+    var existingMigrationOrdinals = fs.readdirSync(absoluteMigrationDirectory).map(function(filename) {
         return parseInt(filename.match(/^(\d+)/)[1], 10);
     }).sort(function(a, b) {
         return a - b;	
-	});
+    });
     
-	var nextOrdinal = (existingMigrationOrdinals.pop() || 0) + 1;
+    var nextOrdinal = (existingMigrationOrdinals.pop() || 0) + 1;
     var fileName = padNumeral(nextOrdinal) + "-" + makeNameFilename(migrationName) + ".js";
-	var absoluteFileName = path.join(absoluteMigrationDirectory, fileName);
-	fs.writeFileSync(absoluteFileName, migrationTemplate, {mode: parseInt('0664', 8)});
-	console.log("  Created Migration '" + path.join(relativeMigrationDirectory, fileName)); + "'";
+    var absoluteFileName = path.join(absoluteMigrationDirectory, fileName);
+    fs.writeFileSync(absoluteFileName, migrationTemplate, {mode: parseInt('0664', 8)});
+    console.log("  Created Migration '" + path.join(relativeMigrationDirectory, fileName)); + "'";
 };
 
     
