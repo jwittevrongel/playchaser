@@ -1,0 +1,10 @@
+{
+	db: {
+		connectionString: "mongodb://localhost/playchaser",
+		options: {
+		}
+	},
+	initialSetup: {
+		adminPassword: "changeme123"
+	}
+}
