@@ -6,9 +6,9 @@ var mongoose = require('mongoose'),
     SALT_WORK_FACTOR = 10;
  
 var PlayerSchema = new Schema({
-    _id: { type: String },
     thisPasswd: { type: String },
-    idp: { type: String },
+    idp: { type: String, required: true },
+    idpUserId : { type: String, required: true },
     profile: {
     	realName: String,
     	avatarUrl: String,
@@ -21,7 +21,8 @@ var PlayerSchema = new Schema({
     		tz: String,
     		lang: String
     	}
-    }
+    },
+	index: {idp: 1, idpUserid} 
 });
 
 PlayerSchema.pre(save, function(next) {
