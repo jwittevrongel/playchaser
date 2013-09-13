@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 var Player = require ('../../models/Player'),
     config = require ('../../lib/config/config');
@@ -13,7 +13,7 @@ exports.up = function(mongoose, next) {
 
     var theFirstAdministrator = new Player({
         idp: "this",
-        idpUserId: "Administrator",
+        _id: "Administrator",
         thisPasswd: adminPassword,
         profile: {
             realName: "PlayChaser Administrator"

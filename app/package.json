@@ -10,10 +10,11 @@
     "less-middleware": "*",
     "socket.io": "*",
     "mongoose": "3.6.x",
-    "nconf": "0.6.7"
+    "nconf": "0.6.7",
+    "async": "0.2.9",
+    "bcrypt": "~0.7.7"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">= 0.10.3"
   },

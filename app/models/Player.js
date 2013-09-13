@@ -2,34 +2,36 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    bcrypt = require(bcrypt),
+    bcrypt = require('bcrypt'),
     SALT_WORK_FACTOR = 10;
  
 var PlayerSchema = new Schema({
-    thisPasswd: { type: String },
+    passwd: { type: String },
     idp: { type: String, required: true },
-    idpUserId : { type: String, required: true },
+    _id : { type: String },
     profile: {
     	realName: String,
-    	avatarUrl: String,
-    	location: {
-    		city: String,
-    		state: String,
-    		country: String
-    	},
-    	locale: {
-    		tz: String,
-    		lang: String
-    	}
-    },
-	index: {idp: 1, idpUserid} 
+        email: String,
+        avatarUrl: String,
+        location: {
+            city: String,
+            state: String,
+            country: String
+        },
+        locale: {
+            tz: String,
+            lang: String
+        },
+    }
 });
 
-PlayerSchema.pre(save, function(next) {
+PlayerSchema.index({ _id: 1, idp: 1 }); 
+
+PlayerSchema.pre('save', function(next) {
     var player = this;
  
 	// only hash the password if it has been modified (or is new)
-	if (!player.isModified('thisPasswd')) {
+	if (!player.isModified('passwd')) {
 		return next();
  	}
  	
@@ -40,20 +42,20 @@ PlayerSchema.pre(save, function(next) {
     	}
  
     	// hash the password using our new salt
-    	bcrypt.hash(player.thisPasswd, salt, function(err, hash) {
+    	bcrypt.hash(player.passwd, salt, function(err, hash) {
         	if (err) {
         		return next(err);
  			}
  			
         	// override the cleartext password with the hashed one
-        	player.thisPasswd = hash;
+        	player.passwd = hash;
         	next();
     	});
 	});
 });
  
 PlayerSchema.methods.checkPassword = function(candidatePassword, callback) {
-    bcrypt.compare(candidatePassword, this.thisPasswd, function(err, isMatch) {
+    bcrypt.compare(candidatePassword, this.passwd, function(err, isMatch) {
         if (err) {
         	return callback(err);
         }
@@ -61,4 +63,4 @@ PlayerSchema.methods.checkPassword = function(candidatePassword, callback) {
     });
 };
  
-module.exports = mongoose.model("Player", PlayerSchema);
+exports = mongoose.model("Player", PlayerSchema);
