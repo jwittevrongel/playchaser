@@ -6,23 +6,26 @@ var Player = require ('../../models/Player'),
 exports.up = function(mongoose, next) {
     var adminPassword = config.initialSetup.adminPassword;
     if (!adminPassword) {
-        var errorMessage = '*** Error: initialSetup.adminPassword was not set in site.json';
-        next(errorMessage);
+        next('*** Error: initialSetup.adminPassword was not set in site.json');
         return;
     }
-
+    
     var theFirstAdministrator = new Player({
         idp: "this",
         _id: "Administrator",
-        thisPasswd: adminPassword,
+        passwd: adminPassword,
         profile: {
             realName: "PlayChaser Administrator"
         }
     });
-    theFirstAdministrator.save();
-    next();
+
+    theFirstAdministrator.save(function (err) {
+        next(err);
+    });
 }
 
 exports.down = function(mongoose, next) {
-    next();
+    Player.remove({ _id: "Administrator" }, function(err) {
+        next(err);
+    });
 }

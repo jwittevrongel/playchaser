@@ -63,4 +63,4 @@ PlayerSchema.methods.checkPassword = function(candidatePassword, callback) {
     });
 };
  
-exports = mongoose.model("Player", PlayerSchema);
+module.exports = mongoose.model("Player", PlayerSchema);

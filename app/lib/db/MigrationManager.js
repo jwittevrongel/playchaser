@@ -23,23 +23,46 @@ function performMigrationUp(migrationName, callback) {
     // see if the migration has already been performed.  If so, skip it
     Migration.findById(migrationName, function(err, results) {
 		if (results) {
-			console.log("Migration " + migrationName + " was already applied. Skipping.");
+			// already applied
 			callback();
 			return;
 		}
 
 		console.log("Applying Migration: " + migrationName);
 		var executableMigration = require(path.join(relativeMigrationDirectory, migrationName));
-		//executableMigration.up(mongoose, function(err) {
-		//	if (err) {
-		//		callback(err);
-		//		return;
-		//	} 
-		//	var migration = new Migration({ _id: migrationName, applied: new Date() });
-		//	migration.save(function(err, results) {
+		executableMigration.up(mongoose, function(err) {
+			if (err) {
 				callback(err);
-		//	});
-		//});
+				return;
+			} 
+			var migration = new Migration({ _id: migrationName, applied: new Date() });
+			migration.save(function(err, results) {
+				callback(err);
+			});
+		});
+	});
+};
+
+function performMigrationDown(migrationName, callback) {
+    // see if the migration was previously performed.  If not, skip it
+    Migration.findById(migrationName, function(err, results) {
+		if (!results) {
+			// already applied
+			callback();
+			return;
+		}
+
+		console.log("Reverting Migration: " + migrationName);
+		var executableMigration = require(path.join(relativeMigrationDirectory, migrationName));
+		executableMigration.down(mongoose, function(err) {
+			if (err) {
+				callback(err);
+				return;
+			} 
+			Migration.remove({ _id: migrationName }, function(err) {
+				callback(err);
+			});
+		});
 	});
 };
 
@@ -53,35 +76,57 @@ function listAvailableMigrations() {
 		});
 };
 
-exports.up = function(migrationName) {
-    var allMigrations = listAvailableMigrations().sort();
-    if (!allMigrations.length) {
+function performMigrations(migrationName, migrationList, migrationFunction) {
+
+	if (!migrationList.length) {
         // no migrations, nothing to do....
         return;
 	}
 
     if (!migrationName) {
-        // find highest numbered migration if one was not provided
-        migrationName = allMigrations[allMigrations.length - 1];
+        // migrate to the end if no migration name was supplied
+        migrationName = migrationList[migrationList.length - 1];
     } else {
         // ensure the named migration actually exists and use it.  If we can't
         // find it or can't find a unique match (multiple matches) then don't 
         // proceed
-        
+		var foundCount = 0;
+		var originalMigrationName = migrationName;
+        for (var i = 0; i < migrationList.length; ++i) {
+			if (migrationList[i].indexOf(originalMigrationName) !== -1) {
+				++foundCount;
+				migrationName = migrationList[i];
+			}
+		}
+		if (foundCount === 0) {
+			console.log("Error: Could not find a migration matching the name '" + originalMigrationName + "'");
+			return;
+		}
+		if (foundCount > 1) {
+			console.log("Error: Multiple Migrations found that match the name '" + originalMigrationName + "'");
+			return;
+		}
         // slice the array so that the target migration is the last in the list
+		migrationList = migrationList.slice(0, migrationList.indexOf(migrationName) + 1);
     }
 
     mongoose.connect(config.db.connectionString, config.db.options);
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, 'Migration Failed.  MongoDB connection error:'));
     db.once('open', function() {
-        async.eachSeries(allMigrations, performMigrationUp, function(err) {
+        async.eachSeries(migrationList, migrationFunction, function(err) {
 			db.close();
 		});
     });
+
+};
+
+exports.up = function(migrationName) {
+    performMigrations(migrationName, listAvailableMigrations().sort(), performMigrationUp);
 };
 
 exports.down = function(migrationName) {
+	performMigrations(migrationName, listAvailableMigrations().sort().reverse(), performMigrationDown);
 };
 
 exports.create = function(migrationName) {
