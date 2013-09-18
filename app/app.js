@@ -13,7 +13,7 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
@@ -22,10 +22,18 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 app.use(app.router);
-app.use(require('less-middleware')({ src: __dirname + '/public' }));
+
+// compress / optimize CSS output if we're not in development
+var lessOptions = { src: path.join(__dirname, 'public') };
+if ('development' !== app.get('env')) {
+    lessOptions.compress = true;
+    lessOptions.optimization = 2;
+}
+app.use(require('less-middleware')(lessOptions));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
+// add error handler in development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
