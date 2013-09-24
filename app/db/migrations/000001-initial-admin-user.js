@@ -22,10 +22,10 @@ exports.up = function(mongoose, next) {
     theFirstAdministrator.save(function (err) {
         next(err);
     });
-}
+};
 
 exports.down = function(mongoose, next) {
     Player.remove({ _id: "Administrator" }, function(err) {
         next(err);
     });
-}
+};

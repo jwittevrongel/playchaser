@@ -10,7 +10,7 @@ var PlayerSchema = new Schema({
     idp: { type: String, required: true },
     _id : { type: String },
     profile: {
-    	realName: String,
+        realName: String,
         email: String,
         avatarUrl: String,
         location: {
@@ -30,34 +30,34 @@ PlayerSchema.index({ _id: 1, idp: 1 });
 PlayerSchema.pre('save', function(next) {
     var player = this;
  
-	// only hash the password if it has been modified (or is new)
-	if (!player.isModified('passwd')) {
-		return next();
- 	}
- 	
-	// generate a salt
-	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-    	if (err) { 
-    		return next(err);
-    	}
+    // only hash the password if it has been modified (or is new)
+    if (!player.isModified('passwd')) {
+        return next();
+    }
+    
+    // generate a salt
+    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+        if (err) { 
+            return next(err);
+        }
  
-    	// hash the password using our new salt
-    	bcrypt.hash(player.passwd, salt, function(err, hash) {
-        	if (err) {
-        		return next(err);
- 			}
- 			
-        	// override the cleartext password with the hashed one
-        	player.passwd = hash;
-        	next();
-    	});
-	});
+        // hash the password using our new salt
+        bcrypt.hash(player.passwd, salt, function(err, hash) {
+            if (err) {
+                return next(err);
+            }
+            
+            // override the cleartext password with the hashed one
+            player.passwd = hash;
+            next();
+        });
+    });
 });
  
 PlayerSchema.methods.checkPassword = function(candidatePassword, callback) {
     bcrypt.compare(candidatePassword, this.passwd, function(err, isMatch) {
         if (err) {
-        	return callback(err);
+            return callback(err);
         }
         callback(null, isMatch);
     });

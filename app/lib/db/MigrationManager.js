@@ -12,12 +12,12 @@ var absoluteMigrationDirectory = path.join(__dirname, relativeMigrationDirectory
 
 function padNumeral(numeral) {
     // pad with zeroes, to 6 places
-    return Array(7 - numeral.toString().length).join('0') + numeral;
-};
+    return new Array(7 - numeral.toString().length).join('0') + numeral;
+}
 
 function makeNameFilename(migrationName) {
     return migrationName.replace(/\s+/g, '-');
-};
+}
 
 function performMigrationUp(migrationName, callback) {
     // see if the migration has already been performed.  If so, skip it
@@ -41,7 +41,7 @@ function performMigrationUp(migrationName, callback) {
 			});
 		});
 	});
-};
+}
 
 function performMigrationDown(migrationName, callback) {
     // see if the migration was previously performed.  If not, skip it
@@ -64,7 +64,7 @@ function performMigrationDown(migrationName, callback) {
 			});
 		});
 	});
-};
+}
 
 function listAvailableMigrations() {
 	return fs.readdirSync(absoluteMigrationDirectory)
@@ -74,7 +74,7 @@ function listAvailableMigrations() {
 		.map(function(filename) {
 			return filename.substring(0, filename.length - 3);
 		});
-};
+}
 
 function performMigrations(migrationName, migrationList, migrationFunction) {
 
@@ -119,7 +119,7 @@ function performMigrations(migrationName, migrationList, migrationFunction) {
 		});
     });
 
-};
+}
 
 exports.up = function(migrationName) {
     performMigrations(migrationName, listAvailableMigrations().sort(), performMigrationUp);
@@ -135,11 +135,11 @@ exports.create = function(migrationName) {
         '',
         'exports.up = function(mongoose, next) {',
         '    next();',
-        '}',
+        '};',
         '',
         'exports.down = function(mongoose, next) {',
         '    next();',
-        '}',
+        '};',
         ''
     ].join('\n');
 
@@ -159,7 +159,7 @@ exports.create = function(migrationName) {
     var fileName = padNumeral(nextOrdinal) + "-" + makeNameFilename(migrationName) + ".js";
     var absoluteFileName = path.join(absoluteMigrationDirectory, fileName);
     fs.writeFileSync(absoluteFileName, migrationTemplate, { mode: parseInt('0664', 8) });
-    console.log("  Created Migration '" + path.join(relativeMigrationDirectory, fileName)); + "'";
+    console.log("  Created Migration '" + path.join(relativeMigrationDirectory, fileName) + "'");
 };
 
     
