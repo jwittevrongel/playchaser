@@ -30,10 +30,14 @@ module.exports = function(grunt) {
         }
       },
       client: {
-        src: ['public/**/*.js'],
+        src: ['public/js/**/*.js'],
         options: {
           browser: true,
-          jquery: true
+          jquery: true,
+          globalstrict: true,
+          globals: {
+            angular: false
+          }
         }
       }
     },
