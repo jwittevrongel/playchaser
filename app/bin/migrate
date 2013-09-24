@@ -3,75 +3,75 @@
 "use strict";
 
 var printUsage = function() {
-	var usageText = [
-		'',
-		'Usage:', 
-		'',
-		' migrate create [name]',
-		'    Creates a new migration script with the given name in db/migrations',
-		'',
-		' migrate',
-		' migrate up',
-		'    Runs all not-yet-run migrations in db/migrations',
-		'',
-		' migrate up [name]',
-		'    Runs all not-yet-run migrations in db/migrations, up to and including',
-		'    the named migration',
-		'',
-		' migrate down [name]',
-		'    Runs all down-migrations in db/migrations, up to and including',
-		'    the named migration',
-		''
-	].join('\n');
-	
-	console.log(usageText);
-	process.exit();
+    var usageText = [
+        '',
+        'Usage:', 
+        '',
+        ' migrate create [name]',
+        '    Creates a new migration script with the given name in db/migrations',
+        '',
+        ' migrate',
+        ' migrate up',
+        '    Runs all not-yet-run migrations in db/migrations',
+        '',
+        ' migrate up [name]',
+        '    Runs all not-yet-run migrations in db/migrations, up to and including',
+        '    the named migration',
+        '',
+        ' migrate down [name]',
+        '    Runs all down-migrations in db/migrations, up to and including',
+        '    the named migration',
+        ''
+    ].join('\n');
+    
+    console.log(usageText);
+    process.exit();
 };
-	
+    
 var args = process.argv.slice(2);
 
 if (args.length > 2) {
-	printUsage();
-	return;
+    printUsage();
+    return;
 }
-	
+    
 // defaults for command name and migration name
 var command = 'up';
 var migrationName = '';
-		
+        
 if (args.length > 0) {
-	command = args[0];
+    command = args[0];
 }
-	
+    
 if (args.length > 1) {
-	migrationName = args[1];
+    migrationName = args[1];
 }
-	
+    
 var migrationManager = require('../lib/db/MigrationManager');
-	
+    
 switch (command) {
-	case 'up':
-		migrationManager.up(migrationName);
-		break;
-	case 'down':
-		if (!migrationName) {
-			console.log('\n*** Error: You must specify the final migration to revert\n');
-			printUsage();
-			return;
-		}
-		migrationManager.down(migrationName);
-		break;
-	case 'create':
-		if (!migrationName) {
-			console.log('\n*** Error: You must specify the name of the migration to create\n');
-			printUsage();
-			return;
-		}
-		migrationManager.create(migrationName);
-		break;
+    case 'up':
+        migrationManager.up(migrationName);
+        break;
+    case 'down':
+        if (!migrationName) {
+            console.log('\n*** Error: You must specify the final migration to revert\n');
+            printUsage();
+            return;
+        }
+        migrationManager.down(migrationName);
+        break;
+    case 'create':
+        if (!migrationName) {
+            console.log('\n*** Error: You must specify the name of the migration to create\n');
+            printUsage();
+            return;
+        }
+        migrationManager.create(migrationName);
+        break;
     default:
         console.log('\n***Error: Invalid command "' + command + '"' + '\n');
-		printUsage();
-		break;
+        printUsage();
+        break;
 }
 
