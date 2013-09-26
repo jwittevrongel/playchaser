@@ -8,7 +8,8 @@ var mongoose = require('mongoose'),
 var PlayerSchema = new Schema({
     passwd: { type: String },
     idp: { type: String, required: true },
-    _id : { type: String },
+    idpUsername: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
     profile: {
         realName: String,
         email: String,
@@ -25,7 +26,7 @@ var PlayerSchema = new Schema({
     }
 });
 
-PlayerSchema.index({ _id: 1, idp: 1 }); 
+PlayerSchema.index({ idp: 1, idpUsername: 1 }); 
 
 PlayerSchema.pre('save', function(next) {
     var player = this;

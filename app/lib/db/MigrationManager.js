@@ -2,7 +2,7 @@
 
 var fs = require('fs'),
     path = require('path'),
-    config = require('../config/config'),
+    config = require('../config'),
     mongoose = require('mongoose'),
     Migration = require('./Migration'),
     async = require('async');

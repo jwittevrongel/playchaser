@@ -1,7 +1,7 @@
 "use strict";
 
 var Player = require ('../../models/Player'),
-    config = require ('../../lib/config/config');
+    config = require ('../../lib/config');
 
 exports.up = function(mongoose, next) {
     var adminPassword = config.initialSetup.adminPassword;
@@ -12,7 +12,8 @@ exports.up = function(mongoose, next) {
     
     var theFirstAdministrator = new Player({
         idp: "this",
-        _id: "Administrator",
+        idpUsername: "Administrator",
+        username: "Administrator",
         passwd: adminPassword,
         profile: {
             realName: "PlayChaser Administrator"
@@ -25,7 +26,7 @@ exports.up = function(mongoose, next) {
 };
 
 exports.down = function(mongoose, next) {
-    Player.remove({ _id: "Administrator" }, function(err) {
+    Player.remove({ idp: 'this', idpUsername: 'Administrator' }, function(err) {
         next(err);
     });
 };
