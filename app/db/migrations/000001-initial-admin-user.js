@@ -12,7 +12,7 @@ exports.up = function(mongoose, next) {
     
     var theFirstAdministrator = new Player({
         idp: "this",
-        idpUsername: "Administrator",
+        idpUsername: "administrator@playchaser.com",
         username: "Administrator",
         passwd: adminPassword,
         profile: {
@@ -26,7 +26,7 @@ exports.up = function(mongoose, next) {
 };
 
 exports.down = function(mongoose, next) {
-    Player.remove({ idp: 'this', idpUsername: 'Administrator' }, function(err) {
+    Player.remove({ idp: 'this', idpUsername: 'administrator@playchaser.com' }, function(err) {
         next(err);
     });
 };

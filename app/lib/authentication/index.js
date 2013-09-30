@@ -29,6 +29,17 @@ passport.use(new LocalStrategy(
     }
 ));
 
+// set up session serialization
+passport.serializeUser(function(user, done) {
+  done(null, user._id);
+});
+
+passport.deserializeUser(function(_id, done) {
+  Player.findById(_id, function(err, user) {
+    done(err, user);
+  });
+});
+
 
 // middleware to enforce authentication on requests
 module.exports = function(req, res, next) {

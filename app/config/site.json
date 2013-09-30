@@ -6,5 +6,11 @@
     },
     "initialSetup": {
         "adminPassword": "changeme123"
+    },
+    "session": {
+        "secrets": {
+            "cookie": "I am the Walrus",
+            "express": "Lucy in the Sky with Diamonds"
+        }    
     }
 }
