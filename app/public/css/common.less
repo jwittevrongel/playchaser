@@ -1,9 +1,6 @@
-/*
-common.less
+//
+// load the parts of bootstrap that we want, as opposed to the ones we don't want
 
-This is a customized version of bootstrap.less that loads the parts of bootstrap we actually want
-while using custom variable definitions.
-*/
 // Core variables and mixins
 @import "bootstrap-variables.less";
 @import "../lib/bootstrap/less/mixins.less";
@@ -23,7 +20,7 @@ while using custom variable definitions.
 
 // Components
 @import "../lib/bootstrap/less/component-animations.less";
-@import "../lib/bootstrap/less/glyphicons.less";
+//@import "../lib/bootstrap/less/glyphicons.less";
 @import "../lib/bootstrap/less/dropdowns.less";
 @import "../lib/bootstrap/less/button-groups.less";
 @import "../lib/bootstrap/less/input-groups.less";
@@ -54,3 +51,12 @@ while using custom variable definitions.
 @import "../lib/bootstrap/less/utilities.less";
 @import "../lib/bootstrap/less/responsive-utilities.less";
 
+//
+// Now that bootstrap is done, load font-awesome
+@import "font-awesome-variables.less";
+@import "../lib/font-awesome/less/mixins.less";
+@import "../lib/font-awesome/less/path.less";
+@import "../lib/font-awesome/less/core.less";
+@import "../lib/font-awesome/less/bootstrap.less";
+@import "../lib/font-awesome/less/extras.less";
+@import "../lib/font-awesome/less/icons.less";

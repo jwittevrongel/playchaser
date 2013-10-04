@@ -64,10 +64,19 @@ module.exports = function(grunt) {
     copy: {
       client: {
         files: [{
-           expand: true,
-           cwd: 'public/',
-           src: ['**/*.html', 'lib/**/*.js', '**/*.css', 'js/**/*.js'],
-           dest: 'client/'
+          expand: true,
+          cwd: 'public/',
+          src: ['**/*.html', 'lib/**/*.js', '**/*.css', 'js/**/*.js'],
+          dest: 'client/'
+        }]
+      },
+      fonts: {
+        files: [{
+          expand: true,
+          flatten: true,
+          cwd: 'public/lib/',
+          src: ['*/fonts/*'],
+          dest: 'client/fonts/'
         }]
       }
     }
@@ -80,6 +89,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
-  grunt.registerTask('default', ['jshint', 'less:dev', 'copy:client']);
-  grunt.registerTask('dist', ['jshint', 'concat:client', 'uglify:client', 'less:dist', 'copy:client', ]);
+  grunt.registerTask('default', ['jshint', 'less:dev', 'copy']);
+  grunt.registerTask('dist', ['jshint', 'concat:client', 'uglify:client', 'less:dist', 'copy']);
 };

@@ -45,11 +45,14 @@ passport.deserializeUser(function(_id, done) {
 module.exports = function(req, res, next) {
     // enforce authentication for the request
     if (!req.user) {
-        // some URL prefixes are exempt - anything in lib and in css is OK without auth
+        // some URL prefixes are exempt - anything in lib, fonts, or css is OK without auth
         if (req.path.lastIndexOf('/lib/', 0) === 0) {
             return next();
         }
         if (req.path.lastIndexOf('/css/', 0) === 0) {
+            return next();
+        }
+        if (req.path.lastIndexOf('/fonts/', 0) === 0) {
             return next();
         }
  
