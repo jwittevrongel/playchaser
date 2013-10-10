@@ -6,17 +6,28 @@
         <title>Playchaser - Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Todo: Place favicon.ico and apple-touch-icon.png in the root directory -->
-
-        <link rel="stylesheet" href="css/login.css">
+        <link rel="icon" type="image/png" href="/img/icon64.png">
+        <link rel="apple-touch-icon" sizes="144x144" type="image/png" href="/img/icon144.png">
+        <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="/img/icon114.png">
+        <link rel="apple-touch-icon" sizes="72x72" type="image/png" href="/img/icon72.png">
+        <link rel="apple-touch-icon" sizes="57x57" type="image/png" href="/img/icon57.png">
+        <link rel="stylesheet" type="text/css" href="css/login.css">
     </head>
     <body>
-        <h1>Playchaser - Login</h1>
-        <form method="POST" action="/login" autocomplete="on">
+        <h1 class="masthead"><span class="playchaser-logo"></span> Playchaser</h1>
+
+        <form method="POST" action="/login" autocomplete="on" class="login-form">
+            Get Chasing!
             <label>Username: <input name="username" type="email" required></label>
             <label>Password: <input name="password" type="password" required></label>
             <input type="submit" name="submit" value="Login">
         </form>
-
+        <div class="signup-form">
+            Not a Member?
+        </div>
+        <div class="about-playchaser">
+            Playchaser is ...
+        </div>
         <script src="lib/js/jquery.min.js"></script>
         <script src="lib/js/angular.min.js"></script>
         <script src="lib/js/angular-resource.min.js"></script>

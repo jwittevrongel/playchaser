@@ -55,9 +55,12 @@ module.exports = function(req, res, next) {
         if (req.path.lastIndexOf('/fonts/', 0) === 0) {
             return next();
         }
+        if (req.path.lastIndexOf('/img/', 0) === 0) {
+            return next();
+        }
  
         // allow user access to login / logout routes
-        var allowedPaths = ['/favicon.ico', 'robots.txt', '/login', '/js/login.js'];
+        var allowedPaths = ['/robots.txt', '/login', '/js/login.js'];
         for (var i = 0; i < allowedPaths.length; ++i) {
             if (req.path === allowedPaths[i]) {
                 return next();
