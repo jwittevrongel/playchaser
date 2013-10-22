@@ -1,6 +1,95 @@
 @import "common.less";
-h1 {
-    font-size: 72px;
-}    
 
+body 
+{
+    .container-fixed(); 
+}
 
+.login-form
+{
+    background-color: @pc-brand-color-primary-1;
+    @media (min-width: @screen-tablet) 
+    {
+        .border-radius(4px);
+    }
+}
+
+.body, .header
+{
+    .make-row();
+}
+
+.masthead 
+{
+     .page-header;
+}
+
+.masthead, .login-form, 
+{
+    .make-xs-column(12);
+    .make-sm-column-offset(2);
+    .make-sm-column(5);
+    .make-lg-column-offset(1);
+    .make-lg-column(3);
+}
+
+.login-form
+{
+    padding: (@line-height-computed / 2);
+}
+
+form > div
+{
+    .input-group;
+    margin: (@line-height-computed / 2) 0;
+}
+
+.email-label, .password-label
+{
+    .input-group-addon;
+}
+
+.email-label:before
+{
+    .icon(@envelope);
+}
+
+.password-label:before
+{
+    .icon(@key);
+}
+
+button:before
+{
+    .icon(@lock);
+}
+
+.signup-form
+{
+    .make-xs-column(12);
+    .make-sm-column(5);
+    .make-lg-column(3);
+}
+
+.about-playchaser
+{
+    .make-xs-column(12);
+    .make-sm-column(5);
+    .make-lg-column(3);
+}
+
+input
+{
+    .form-control;
+}
+
+form
+{
+    .form-group;
+}
+
+button
+{
+    .btn;
+    .btn-default;
+}
