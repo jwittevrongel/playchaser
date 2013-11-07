@@ -22,7 +22,7 @@ var PlayerSchema = new Schema({
         locale: {
             tz: String,
             lang: String
-        },
+        }
     }
 });
 
