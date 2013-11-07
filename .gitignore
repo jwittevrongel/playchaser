@@ -15,3 +15,4 @@ npm-debug.log
 node_modules
 client
 *.css
+.DS_Store
