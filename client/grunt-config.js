@@ -29,6 +29,6 @@
 			}
 		},
 		npmPlugins: ['grunt-contrib-sass', 'grunt-contrib-jshint'],
-		tasks: ['jshint', 'sass']
+		tasks: ['jshint:client', 'sass:client']
 	};
 })(module);
