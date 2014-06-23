@@ -4,8 +4,8 @@ var nconf = require('nconf');
 
 nconf.argv()
      .env()
-     .file('site', 'config/site.json')
-     .file('application', 'config/application.json');
+     .file('site', __dirname + '/site.json')
+     .file('application', __dirname + '/application.json');
 
 exports.port = nconf.get('port');
 exports.db = nconf.get('db');

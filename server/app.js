@@ -4,8 +4,8 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
-    authentication = require('./lib/authentication'),
-    config = require ('./lib/config'),
+    authentication = require('./authentication'),
+    config = require ('./config'),
     mongoose = require('mongoose');
 
 var app = express();

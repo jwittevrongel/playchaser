@@ -3,7 +3,7 @@
 var path = require('path'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    Player = require('../../models/Player');
+    Player = require('../models/Player');
 
 // configure passport for local authentication
 passport.use(new LocalStrategy(
