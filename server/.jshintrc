@@ -1,0 +1,9 @@
+{
+	"node": true,
+	"undef": true,
+	"unused": true,
+	"latedef": true,
+	"immed": true,
+	"nonbsp": true,
+	"nonew": true
+}

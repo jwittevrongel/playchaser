@@ -7,8 +7,7 @@ var fs = require('fs'),
     Migration = require('./Migration'),
     async = require('async');
 
-var relativeMigrationDirectory = path.join('..', '..', 'db', 'migrations');
-var absoluteMigrationDirectory = path.join(__dirname, relativeMigrationDirectory);
+var migrationDirectory = path.join(__dirname, 'migrations');
 
 function padNumeral(numeral) {
     // pad with zeroes, to 6 places
@@ -29,14 +28,14 @@ function performMigrationUp(migrationName, callback) {
         }
 
         console.log("Applying Migration: " + migrationName);
-        var executableMigration = require(path.join(relativeMigrationDirectory, migrationName));
+        var executableMigration = require(path.join(migrationDirectory, migrationName));
         executableMigration.up(mongoose, function(err) {
             if (err) {
                 callback(err);
                 return;
             } 
             var migration = new Migration({ _id: migrationName, applied: new Date() });
-            migration.save(function(err, results) {
+            migration.save(function(err) {
                 callback(err);
             });
         });
@@ -53,7 +52,7 @@ function performMigrationDown(migrationName, callback) {
         }
 
         console.log("Reverting Migration: " + migrationName);
-        var executableMigration = require(path.join(relativeMigrationDirectory, migrationName));
+        var executableMigration = require(path.join(migrationDirectory, migrationName));
         executableMigration.down(mongoose, function(err) {
             if (err) {
                 callback(err);
@@ -67,7 +66,7 @@ function performMigrationDown(migrationName, callback) {
 }
 
 function listAvailableMigrations() {
-    return fs.readdirSync(absoluteMigrationDirectory)
+    return fs.readdirSync(migrationDirectory)
         .filter(function(filename) {
             return (filename.indexOf('.js', filename.length - 3) !== -1);
         })
@@ -114,7 +113,7 @@ function performMigrations(migrationName, migrationList, migrationFunction) {
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, 'Migration Failed.  MongoDB connection error:'));
     db.once('open', function() {
-        async.eachSeries(migrationList, migrationFunction, function(err) {
+        async.eachSeries(migrationList, migrationFunction, function() {
             db.close();
         });
     });
@@ -144,12 +143,12 @@ exports.create = function(migrationName) {
     ].join('\n');
 
     try {
-        fs.mkdirSync(absoluteMigrationDirectory, parseInt('0775', 8));
+        fs.mkdirSync(migrationDirectory, parseInt('0775', 8));
     } catch (err) {
         // ignore error creating directory
     }
 
-    var existingMigrationOrdinals = fs.readdirSync(absoluteMigrationDirectory).map(function(filename) {
+    var existingMigrationOrdinals = fs.readdirSync(migrationDirectory).map(function(filename) {
         return parseInt(filename.match(/^(\d+)/)[1], 10);
     }).sort(function(a, b) {
         return a - b;   
@@ -157,9 +156,9 @@ exports.create = function(migrationName) {
     
     var nextOrdinal = (existingMigrationOrdinals.pop() || 0) + 1;
     var fileName = padNumeral(nextOrdinal) + "-" + makeNameFilename(migrationName) + ".js";
-    var absoluteFileName = path.join(absoluteMigrationDirectory, fileName);
+    var absoluteFileName = path.join(migrationDirectory, fileName);
     fs.writeFileSync(absoluteFileName, migrationTemplate, { mode: parseInt('0664', 8) });
-    console.log("  Created Migration '" + path.join(relativeMigrationDirectory, fileName) + "'");
+    console.log("  Created Migration '" + path.join(migrationDirectory, fileName) + "'");
 };
 
     

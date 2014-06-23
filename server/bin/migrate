@@ -47,7 +47,7 @@ if (args.length > 1) {
     migrationName = args[1];
 }
     
-var migrationManager = require('../lib/db/MigrationManager');
+var migrationManager = require('../db/MigrationManager');
     
 switch (command) {
     case 'up':

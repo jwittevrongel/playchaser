@@ -1,7 +1,7 @@
 "use strict";
 
 var Player = require ('../../models/Player'),
-    config = require ('../../lib/config');
+    config = require ('../../config');
 
 exports.up = function(mongoose, next) {
     var adminPassword = config.initialSetup.adminPassword;
