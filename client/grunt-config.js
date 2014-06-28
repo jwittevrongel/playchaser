@@ -4,15 +4,12 @@
 
 	module.exports = {
 		config: {
-			sass: {
+			less: {
 				client: {
-					options: {
-						precision: 10
-					},
 					files: [{
 						expand: true,
 						cwd: 'client/css',
-						src: ['*.scss'],
+						src: ['*.less', '!_*.less'],
 						dest: 'client/css',
 						ext: '.css'
 					}]
@@ -28,7 +25,7 @@
 				}
 			}
 		},
-		npmPlugins: ['grunt-contrib-sass', 'grunt-contrib-jshint'],
-		tasks: ['jshint:client', 'sass:client']
+		npmPlugins: ['grunt-contrib-less', 'grunt-contrib-jshint'],
+		tasks: ['jshint:client', 'less:client']
 	};
 })(module);
