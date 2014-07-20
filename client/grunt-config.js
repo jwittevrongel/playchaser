@@ -53,7 +53,15 @@
 						cwd: 'static',
 						src: ['**/*.html'],
 						dest: 'static'
-					}]
+					}],
+					options: {
+						removeComments: true,
+						collapseWhitespace: true,
+						collapseBooleanAttributes: true,
+						removeAttributeQuotes: true,
+						removeRedundantAttributes: true,
+						removeEmptyAttributes: true
+					}
 				}
 			},
 			

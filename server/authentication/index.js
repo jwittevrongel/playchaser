@@ -60,7 +60,7 @@ module.exports = function(req, res, next) {
         }
  
         // allow user access to login / logout routes
-        var allowedPaths = ['/robots.txt', '/login', '/js/login.js'];
+        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login'];
         for (var i = 0; i < allowedPaths.length; ++i) {
             if (req.path === allowedPaths[i]) {
                 return next();
@@ -76,7 +76,7 @@ module.exports = function(req, res, next) {
             if (extension !== '' && extension !== '.html') {
                 res.send(401);
             } else {
-                res.redirect('/login');
+                res.redirect('/login.html');
             }
         }
         return; // stop the middleware chain here.
@@ -86,11 +86,8 @@ module.exports = function(req, res, next) {
 
 module.exports.configureRoutes = function(app) {
 	app.route('/login')
-		.get(function(req, res) {
-			res.sendfile(path.join(__dirname, 'client', 'login.html'));
-		})
 		.post(passport.authenticate('local', {
     		successRedirect: '/',
-    		failureRedirect: '/login'
+    		failureRedirect: '/login.html'
 		}));
 };

@@ -18,6 +18,7 @@ var express = require('express'),
 var app = express();
 
 app.set('port', config.port || 3000);
+app.use(compression());
 app.use(morgan('dev'));
 app.use(cookieParser(config.session.secrets.cookie));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,8 +36,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(authentication);
-app.use(compression());
-app.use(express.static(path.join(__dirname, 'client')));
+
+app.use(express.static(path.join(__dirname, '..', 'static')));
 
 // add error handler in development only
 if ('development' == app.get('env')) {
@@ -53,5 +54,6 @@ server.listen(app.get('port'), function(){
 });
 
 // routes
+authentication.configureRoutes(app);
 
 
