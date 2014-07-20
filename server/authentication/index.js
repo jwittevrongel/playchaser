@@ -83,3 +83,14 @@ module.exports = function(req, res, next) {
     }
     next(); 
 };
+
+module.exports.configureRoutes = function(app) {
+	app.route('/login')
+		.get(function(req, res) {
+			res.sendfile(path.join(__dirname, 'client', 'login.html'));
+		})
+		.post(passport.authenticate('local', {
+    		successRedirect: '/',
+    		failureRedirect: '/login'
+		}));
+};

@@ -54,13 +54,4 @@ server.listen(app.get('port'), function(){
 
 // routes
 
-// login page
-app.get('/login', function (req, res) {
-    res.sendfile(path.join(__dirname, 'client', 'login.html'));
-}); 
 
-// handle local authentication (non-OAuth)
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-}));

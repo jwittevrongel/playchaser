@@ -5,20 +5,21 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Playchaser - Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Todo: Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="icon" type="image/png" href="/img/icon64.png">
         <link rel="apple-touch-icon" sizes="144x144" type="image/png" href="/img/icon144.png">
         <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="/img/icon114.png">
         <link rel="apple-touch-icon" sizes="72x72" type="image/png" href="/img/icon72.png">
         <link rel="apple-touch-icon" sizes="57x57" type="image/png" href="/img/icon57.png">
-        <link rel="stylesheet" type="text/css" href="css/login.css">
+        <!-- build:css css/login.min.css -->
+        <link rel="stylesheet" href="css/login.css">
+        <!-- endbuild -->
     </head>
     <body>
         <div class="header">
             <h1 class="masthead"><span class="playchaser-logo"></span> Playchaser</h1>
         </div>
         <div class="body">
-          <form method="POST" action="/login" autocomplete="on" class="login-form">
+          <form method="POST" action="/login" autocomplete="on" class="login-form" novalidate>
               <h2>Get Chasing!</h2>
               <div><span class="email-label"></span><input name="username" type="email" required placeholder="e-mail address" autofocus></div>
               <div><span class="password-label"></span><input name="password" type="password" required placeholder="password"></div>
@@ -32,6 +33,8 @@
           </div>
         </div>
         <script src="lib/angular-1.2.18/angular.min.js"></script>
+        <!-- build:js js/login.min.js -->
         <script src="js/login.js"></script>
+        <!-- endbuild -->
     </body>
 </html>
