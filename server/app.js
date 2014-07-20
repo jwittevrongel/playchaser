@@ -7,7 +7,7 @@ var express = require('express'),
     authentication = require('./authentication'),
     config = require ('./config'),
     mongoose = require('mongoose'),
-    io = require('socket.io'),
+    ioServer = require('socket.io'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
 	session = require('express-session'),
@@ -46,7 +46,7 @@ if ('development' == app.get('env')) {
 mongoose.connect(config.db.connectionString);
 
 var server = http.Server(app);
-io.listen(server);
+/*var io = */ioServer.listen(server);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
