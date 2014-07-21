@@ -7,13 +7,14 @@ var express = require('express'),
     authentication = require('./authentication'),
     config = require ('./config'),
     mongoose = require('mongoose'),
-    ioServer = require('socket.io'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	morgan = require('morgan'),
 	compression = require('compression'),
-	errorHandler = require('errorhandler');
+	errorHandler = require('errorhandler'),
+	WebSocketServer = require('./websockets'),
+	MongoStore = require('connect-mongo')(session);
 	
 var app = express();
 
@@ -30,13 +31,15 @@ app.use(session({
 		httpOnly: true,
 		maxAge: config.session.timeout
 	},
+	store: new MongoStore({
+		url: config.db.connectionString
+	}),
 	resave: true,
 	saveUninitialized: true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(authentication);
-
 app.use(express.static(path.join(__dirname, '..', 'static')));
 
 // add error handler in development only
@@ -47,7 +50,7 @@ if ('development' == app.get('env')) {
 mongoose.connect(config.db.connectionString);
 
 var server = http.Server(app);
-/*var io = */ioServer.listen(server);
+var wsServer = new WebSocketServer(server);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -55,5 +58,4 @@ server.listen(app.get('port'), function(){
 
 // routes
 authentication.configureRoutes(app);
-
-
+wsServer.route('/foo');
