@@ -17,45 +17,62 @@ var express = require('express'),
 	MongoStore = require('connect-mongo')(session);
 	
 var app = express();
-
 app.set('port', config.port || 3000);
 app.use(compression());
 app.use(morgan('dev'));
-app.use(cookieParser(config.session.secrets.cookie));
+var cookieParserInstance = cookieParser(config.session.secrets.cookie);
+app.use(cookieParserInstance);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({ 
-	secret: config.session.secrets.express, 
-	cookie: {
-		path: '/',
-		httpOnly: true,
-		maxAge: config.session.timeout
-	},
-	store: new MongoStore({
-		url: config.db.connectionString
-	}),
-	resave: true,
-	saveUninitialized: true
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(authentication);
-app.use(express.static(path.join(__dirname, '..', 'static')));
 
-// add error handler in development only
-if ('development' == app.get('env')) {
-    app.use(errorHandler());
-}
+mongoose.connect(config.db.connectionString, function(e){
+	if(e) {
+		// error connecting
+		throw e;
+  	}
+	var sessionStore = new MongoStore({ mongoose_connection: mongoose.connection });
+	var expressSession = session({ 
+		secret: config.session.secrets.express, 
+		cookie: {
+			path: '/',
+			httpOnly: true,
+			maxAge: config.session.timeout
+		},
+		store: sessionStore,
+		resave: true,
+		saveUninitialized: true
+	});
+	
+	app.use(expressSession);
+	var passportInit = passport.initialize();
+	var passportSession = passport.session();
+	app.use(passportInit);
+	app.use(passportSession);
+	app.use(authentication);
+	app.use(express.static(path.join(__dirname, '..', 'static')));
 
-mongoose.connect(config.db.connectionString);
+	// add error handler in development only
+	if ('development' == app.get('env')) {
+		app.use(errorHandler());
+	}
 
-var server = http.Server(app);
-var wsServer = new WebSocketServer(server);
+	var server = http.Server(app);
+	var wsServer = new WebSocketServer({
+		server: server,
+		authenticationMiddleware: [
+			cookieParserInstance,
+			expressSession,
+			passportInit,
+			passportSession
+		]
+	});
 
-server.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+	// routes
+	authentication.configureRoutes(app);
+	wsServer.route('/foo');
+	
+	server.listen(app.get('port'), function(){
+	  console.log('Playchaser running on port ' + app.get('port'));
+	});
+
 });
-
-// routes
-authentication.configureRoutes(app);
-wsServer.route('/foo');
