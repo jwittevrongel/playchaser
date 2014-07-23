@@ -40,7 +40,6 @@ passport.deserializeUser(function(_id, done) {
   });
 });
 
-
 // middleware to enforce authentication on requests
 module.exports = function(req, res, next) {
     // enforce authentication for the request
@@ -60,7 +59,7 @@ module.exports = function(req, res, next) {
         }
  
         // allow user access to login / logout routes
-        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login'];
+        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login', '/js/environment.js'];
         for (var i = 0; i < allowedPaths.length; ++i) {
             if (req.path === allowedPaths[i]) {
                 return next();

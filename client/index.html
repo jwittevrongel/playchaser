@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="playchaser">
+<html ng-app="playchaser.index">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,5 +25,15 @@
         <!-- build:js js/index.min.js -->
         <script src="js/index.js"></script>
         <!-- endbuild -->
+        
+        <!-- build:js js/playchaser.min.js -->
+        <script src="js/playchaser.js"></script>
+        <script src="js/util/websocket.js"></script>
+        <!-- endbuild -->
+        
+        <!-- build:replace js/environment.js -->
+        <script src="js/environment_test.js"></script>
+        <!-- endbuild -->
+        
     </body>
 </html>

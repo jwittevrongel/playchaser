@@ -39,6 +39,11 @@
 					options: {
 						type: 'html',
 						assetsDirs: ['static'],
+						blockReplacements: {
+      						replace: function (block) {
+          						return '<script src="' + block.dest + '"></script>';
+          					}
+      					}
 					},
 					files: {
 						src: ['static/**/*.html']

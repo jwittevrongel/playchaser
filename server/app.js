@@ -69,6 +69,7 @@ mongoose.connect(config.db.connectionString, function(e){
 
 	// routes
 	authentication.configureRoutes(app);
+	config.clientEnvironment.configureRoutes(app);
 	wsServer.route('/foo');
 	
 	server.listen(app.get('port'), function(){
