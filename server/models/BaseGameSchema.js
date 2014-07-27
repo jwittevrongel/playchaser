@@ -14,6 +14,7 @@ var GameStateSchema = {
 
 var GameStateContainerSchema = {
 	currentTurn: GameParticipantSchema,
+	isCompleted: Boolean,
 	global: GameStateSchema,
 	perParticipant: [{participant: GameParticipantSchema, state: GameStateSchema}]
 };
@@ -38,6 +39,24 @@ function BaseGameSchema() {
 		currentState: GameStateContainerSchema,
 		moves: [GameTurnSchema]
 	});
+	
+	this.methods.presentTo = function(user) {
+		return this.toObject({
+			getters: true,
+			transform: function(doc, ret) {
+				if(ret.currentState.global.private) {
+					delete ret.currentState.global.private;
+				}
+				if (ret.currentState.perParticipant) {
+					ret.currentState.perParticipant.forEach(function(participant) {
+						if (participant.state.private && participant.participant.player != user._id) { 
+							delete participant.state.private; 
+						}
+					});
+				}
+			}	
+		});
+	};
 }
 
 util.inherits(BaseGameSchema, Schema);
