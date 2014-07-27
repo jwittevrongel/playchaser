@@ -14,7 +14,8 @@ var express = require('express'),
 	compression = require('compression'),
 	errorHandler = require('errorhandler'),
 	WebSocketServer = require('./websockets'),
-	MongoStore = require('connect-mongo')(session);
+	MongoStore = require('connect-mongo')(session),
+	gameEngine = require('./game');
 	
 var app = express();
 app.set('port', config.port || 3000);
@@ -70,6 +71,7 @@ mongoose.connect(config.db.connectionString, function(e){
 	// routes
 	authentication.configureRoutes(app);
 	config.clientEnvironment.configureRoutes(app);
+	gameEngine.configureRoutes(app);
 	wsServer.route('/foo');
 	
 	server.listen(app.get('port'), function(){
