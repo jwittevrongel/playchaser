@@ -5,9 +5,9 @@ var BaseGameSchema = require('./BaseGameSchema'),
 
 var TicTacToeBoardSchema = {
 	board: {
-		"0": {"0": Number, "1": Number, "2": Number},
-		"1": {"0": Number, "1": Number, "2": Number},
-		"2": {"0": Number, "1": Number, "2": Number}
+		"0": {"0": String, "1": String, "2": String},
+		"1": {"0": String, "1": String, "2": String},
+		"2": {"0": String, "1": String, "2": String}
 	}
 };
 

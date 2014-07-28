@@ -14,7 +14,8 @@ var GameStateSchema = {
 
 var GameStateContainerSchema = {
 	currentTurn: GameParticipantSchema,
-	isCompleted: Boolean,
+	isStarted: {type: Boolean, default: false},
+	isCompleted: {type: Boolean, default: false},
 	global: GameStateSchema,
 	perParticipant: [{participant: GameParticipantSchema, state: GameStateSchema}]
 };
@@ -32,9 +33,9 @@ var GameTurnSchema = {
 function BaseGameSchema() {
 	Schema.apply(this, arguments);
 	this.add({
-		owner: {type: Schema.Types.ObjectId, ref : 'Player'},
+		owner: {type: Schema.Types.ObjectId, ref: 'Player'},
 		name: String,
-		rules: {type: Schema.Types.ObjectId, ref: 'RuleSet'},
+		rules: {type: String, ref: 'RuleSet'},
 		participants: [GameParticipantSchema],
 		currentState: GameStateContainerSchema,
 		moves: [GameTurnSchema]

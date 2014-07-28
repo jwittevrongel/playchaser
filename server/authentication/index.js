@@ -45,23 +45,23 @@ module.exports = function(req, res, next) {
     // enforce authentication for the request
     if (!req.user) {
         // some URL prefixes are exempt - anything in lib, fonts, or css is OK without auth
-        if (req.path.lastIndexOf('/lib/', 0) === 0) {
+        if (req.url.lastIndexOf('lib/', 0) === 0) {
             return next();
         }
-        if (req.path.lastIndexOf('/css/', 0) === 0) {
+        if (req.url.lastIndexOf('css/', 0) === 0) {
             return next();
         }
-        if (req.path.lastIndexOf('/fonts/', 0) === 0) {
+        if (req.url.lastIndexOf('fonts/', 0) === 0) {
             return next();
         }
-        if (req.path.lastIndexOf('/img/', 0) === 0) {
+        if (req.url.lastIndexOf('img/', 0) === 0) {
             return next();
         }
  
         // allow user access to login / logout routes
-        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login', '/js/environment.js'];
+        var allowedPaths = ['robots.txt', 'login.html', 'js/login.min.js', 'login', 'js/environment.js'];
         for (var i = 0; i < allowedPaths.length; ++i) {
-            if (req.path === allowedPaths[i]) {
+            if (req.url === allowedPaths[i]) {
                 return next();
             }
         }
@@ -71,11 +71,11 @@ module.exports = function(req, res, next) {
         if ( ((req.method !== 'GET') && (req.method !== 'HEAD') && (req.method !== 'OPTIONS')) || (req.path.lastIndexOf('/api/', 0) === 0)) {
             res.send(401);
         } else {
-            var extension = path.extname(req.path);
+            var extension = path.extname(req.url);
             if (extension !== '' && extension !== '.html') {
                 res.send(401);
             } else {
-                res.redirect('/login.html');
+                res.redirect('login.html');
             }
         }
         return; // stop the middleware chain here.
@@ -84,9 +84,9 @@ module.exports = function(req, res, next) {
 };
 
 module.exports.configureRoutes = function(app) {
-	app.route('/login')
+	app.route('login')
 		.post(passport.authenticate('local', {
-    		successRedirect: '/',
-    		failureRedirect: '/login.html'
+    		successRedirect: 'index.html',
+    		failureRedirect: 'login.html'
 		}));
 };

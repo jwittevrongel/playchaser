@@ -72,7 +72,7 @@ mongoose.connect(config.db.connectionString, function(e){
 	authentication.configureRoutes(app);
 	config.clientEnvironment.configureRoutes(app);
 	gameEngine.configureRoutes(app);
-	wsServer.route('/foo');
+	wsServer.route('foo');
 	
 	server.listen(app.get('port'), function(){
 	  console.log('Playchaser running on port ' + app.get('port'));

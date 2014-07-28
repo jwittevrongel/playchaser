@@ -24,42 +24,48 @@ exports.configureRoutes = function(app) {
 		  		req.game = game;
 		  		next();
 			} else {
-				var message = "Game " + game_id + " was not found.";
-		  		res.send(404, message);
+		  		res.send(404, "Game " + game_id + " was not found.");
 			}
 	  	});
 	});
 	
-	app.route('/games').get(function(req, res) {
-		var filter = { participants: { player: req.user._id } };
-		
+	app.route('games').get(function(req, res) {
+		var where = { participants: { player: req.user._id } };
+		var filter = "owner name rules participants currentState.currentTurn currentState.isCompleted";
 		// query parameters can narrow this list further
 		if (req.query.hasOwnProperty('myTurn')) {
-			filter.currentState = filter.currentState || {};
-			filter.currentState.currentTurn = { player: req.user._id };
+			where.currentState = where.currentState || {};
+			where.currentState.currentTurn = { player: req.user._id };
 		}
 		if (req.query.hasOwnProperty('completed')) {
-			filter.currentState = filter.currentState || {};
-			filter.currentState.isCompleted = true;
+			where.currentState = where.currentState || {};
+			where.currentState.isCompleted = true;
 		} 
 		else if (req.query.hasOwnProperty('active')) {
-			filter.currentState.isCompleted = false;
+			where.currentState = where.currentState || {};
+			where.currentState.isCompleted = false;
 		}
-		Game.find(filter, function(err, games) {
+		Game.find(where, filter, function(err, games) {
 			res.json(presentGames(games, req.user));
 		});
 	});
 		
-	app.route('/games/:game_id').get(function(req, res) {
-		// can they see this game?
-		var canSee = false;
+	app.route('games/:ruleset/:game_id').get(function(req, res) {
+	
+		// does the game's ruleset match?
+		if (req.game.rules != req.params.ruleset) {
+			return res.send(404, "Game " + req.params.game_id + " was not found.");
+		}
+		
+		// are they a participant?
+		var isParticipant = false;
 		req.game.participants.forEach(function(participant) {
 			if (participant.player == req.user._id) {
-				canSee = true;
+				isParticipant = true;
 			}
 		});
 		
-		if (canSee) {
+		if (isParticipant) {
 			res.json(req.game.presentTo(req.user));
 		}
 		else {
