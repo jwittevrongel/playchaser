@@ -130,7 +130,7 @@ exports.down = function(migrationName) {
 
 exports.create = function(migrationName) {
     var migrationTemplate = [
-        '"use strict"',
+        '"use strict";',
         '',
         'exports.up = function(mongoose, next) {',
         '    next();',

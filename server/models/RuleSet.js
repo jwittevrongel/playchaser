@@ -10,4 +10,14 @@ var RuleSetSchema = new Schema({
 	variants: [RuleSetSchema] 
 });
 
+RuleSetSchema.statics.findIdForName = function(name, callback) {
+	RuleSetSchema.findOne({name: name}, "_id", function(err, ruleSet) {
+		if (err) {
+			callback(err);
+		} else {
+			callback(err, ruleSet._id);
+		}	
+	});
+};
+
 module.exports = mongoose.model("RuleSet", RuleSetSchema);
