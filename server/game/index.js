@@ -63,7 +63,7 @@ exports.configureRoutes = function(app) {
 			res.json(req.game.presentTo(req.user));
 		}
 		else {
-			res.send(403, "You are not a participant of this game");
+			res.send(403, "You are not a participant in this game");
 		} 
 	});
 	
