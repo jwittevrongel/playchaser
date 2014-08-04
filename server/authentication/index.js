@@ -45,21 +45,21 @@ module.exports = function(req, res, next) {
     // enforce authentication for the request
     if (!req.user) {
         // some URL prefixes are exempt - anything in lib, fonts, or css is OK without auth
-        if (req.url.lastIndexOf('lib/', 0) === 0) {
+        if (req.url.lastIndexOf('/lib/', 0) === 0) {
             return next();
         }
-        if (req.url.lastIndexOf('css/', 0) === 0) {
+        if (req.url.lastIndexOf('/css/', 0) === 0) {
             return next();
         }
-        if (req.url.lastIndexOf('fonts/', 0) === 0) {
+        if (req.url.lastIndexOf('/fonts/', 0) === 0) {
             return next();
         }
-        if (req.url.lastIndexOf('img/', 0) === 0) {
+        if (req.url.lastIndexOf('/img/', 0) === 0) {
             return next();
         }
  
         // allow user access to login / logout routes
-        var allowedPaths = ['robots.txt', 'login.html', 'js/login.min.js', 'login', 'js/environment.js'];
+        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login', '/js/environment.js'];
         for (var i = 0; i < allowedPaths.length; ++i) {
             if (req.url === allowedPaths[i]) {
                 return next();
@@ -84,7 +84,7 @@ module.exports = function(req, res, next) {
 };
 
 module.exports.configureRoutes = function(app) {
-	app.route('login')
+	app.route('/login')
 		.post(passport.authenticate('local', {
     		successRedirect: 'index.html',
     		failureRedirect: 'login.html'

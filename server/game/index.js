@@ -4,15 +4,42 @@ var fs = require('fs'),
 	path = require('path'),
 	Game = require('../models/Game');
 
+var ruleSets = {};
+fs.readdirSync(__dirname + '/rules/').forEach(function(file) {
+	if (path.extname(file) == '.js') {
+		var ruleSetName = path.basename(file, '.js');
+		ruleSets[ruleSetName] = require('./rules/' + ruleSetName);
+	}
+});
 
 function presentGames(games, user) {
 	var result = [];
 	if (games && games.length) {
 		games.forEach(function(game) {
-			result.push(game.presentTo(user));
+			var presented = game.presentTo(user);
+			presented.url = '/games/' + game.rules + '/' + game.id;
+			result.push(presented);
 		});
 	}
 	return result;
+}
+
+function getListOfGames(model, req, res) {
+	var where = { "participants.player": req.user._id };
+	var filter = "owner name rules participants currentState.currentTurn currentState.isCompleted";
+	// query parameters can narrow this list further
+	if (req.query.hasOwnProperty('myTurn')) {
+		where["currentState.currentTurn.player"] = req.user._id;
+	}
+	if (req.query.hasOwnProperty('completed')) {
+		where["currentState.isCompleted"] = true;
+	} 
+	else if (req.query.hasOwnProperty('active')) {
+		where["currentState.isCompleted"] = false;
+	}
+	model.find(where, filter, function(err, games) {
+		res.json(presentGames(games, req.user));
+	});
 }
 
 exports.configureRoutes = function(app) {
@@ -29,28 +56,11 @@ exports.configureRoutes = function(app) {
 	  	});
 	});
 	
-	app.route('games').get(function(req, res) {
-		var where = { participants: { player: req.user._id } };
-		var filter = "owner name rules participants currentState.currentTurn currentState.isCompleted";
-		// query parameters can narrow this list further
-		if (req.query.hasOwnProperty('myTurn')) {
-			where.currentState = where.currentState || {};
-			where.currentState.currentTurn = { player: req.user._id };
-		}
-		if (req.query.hasOwnProperty('completed')) {
-			where.currentState = where.currentState || {};
-			where.currentState.isCompleted = true;
-		} 
-		else if (req.query.hasOwnProperty('active')) {
-			where.currentState = where.currentState || {};
-			where.currentState.isCompleted = false;
-		}
-		Game.find(where, filter, function(err, games) {
-			res.json(presentGames(games, req.user));
-		});
+	app.route('/games').get(function(req, res) {
+		getListOfGames(Game, req, res);
 	});
 		
-	app.route('games/:ruleset/:game_id').get(function(req, res) {
+	app.route('/games/:ruleset/:game_id').get(function(req, res) {
 	
 		// does the game's ruleset match?
 		if (req.game.rules != req.params.ruleset) {
@@ -73,9 +83,11 @@ exports.configureRoutes = function(app) {
 		} 
 	});
 	
-	fs.readdirSync(__dirname + '/rules/').forEach(function(file) {
-  		if (path.extname(file) == 'js') {
-  			require('./rules/' + path.basename(file, '.js')).configureRoutes(app);
-  		}
-	});
+	app.route('/games/:ruleset/')
+		.get(function(req, res) {
+			getListOfGames(ruleSets[req.params.ruleset].model, req, res);
+		})
+		.post(function(req, res) {
+			ruleSets[req.params.ruleset].create(req, res);
+		});
 };

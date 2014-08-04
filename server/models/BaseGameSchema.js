@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
     util = require('util');
 
 var GameParticipantSchema = {
-	name: {type: String, required: true},
+	name: String,
 	player: {type: Schema.Types.ObjectId, ref : 'Player'}
 };
 
@@ -45,7 +45,10 @@ function BaseGameSchema() {
 		return this.toObject({
 			getters: true,
 			transform: function(doc, ret) {
-				if(ret.currentState.global.private) {
+				if ('function' == typeof doc.ownerDocument) {
+ 					 return ret;
+				}
+				if(ret.currentState.global && ret.currentState.global.private) {
 					delete ret.currentState.global.private;
 				}
 				if (ret.currentState.perParticipant) {
