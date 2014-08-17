@@ -1,0 +1,17 @@
+
+.fa-icon(@name){
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @the-icon: ~"@{fa-var-@{name}}";
+  content: "@{the-icon}";
+}
+
+.fa-reverse-icon(@name){
+  .fa-icon(@name);
+  color: @fa-inverse;
+}

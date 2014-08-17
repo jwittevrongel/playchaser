@@ -31,7 +31,7 @@
 // Components
 //@import "../lib/bootstrap-3.2.0/less/component-animations.less";
 //@import "../lib/bootstrap-3.2.0/less/dropdowns.less";
-//@import "../lib/bootstrap-3.2.0/less/button-groups.less";
+@import (reference) "../lib/bootstrap-3.2.0/less/button-groups.less";
 @import (reference) "../lib/bootstrap-3.2.0/less/input-groups.less";
 //@import "../lib/bootstrap-3.2.0/less/navs.less";
 //@import "../lib/bootstrap-3.2.0/less/navbar.less";
@@ -62,26 +62,12 @@
 //@import "../lib/bootstrap-3.2.0/less/responsive-utilities.less";
 
 
-// font-awesome - the custom version
+// font-awesome
 @import "../lib/font-awesome-4.1.0/less/variables";
 @fa-font-path: "../lib/font-awesome-4.1.0/fonts";
 @import "../lib/font-awesome-4.1.0/less/path";
 
-.fa-icon(@name){
-  display: inline-block;
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  @the-icon: ~"@{fa-var-@{name}}";
-  content: "@{the-icon}";
-}
-
-.fa-reverse-icon(@name){
-  .fa-icon(@name);
-  color: @fa-inverse;
-}
-
+// custom less that is reusable
+@import "_fa";
+@import "_forms";
 

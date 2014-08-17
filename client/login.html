@@ -21,25 +21,29 @@
         <div class="body">
           <form name="loginForm" method="POST" action="/login" autocomplete="on" class="login-form" novalidate>
               <h2>Get Chasing!</h2>
-              <div><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" autofocus ng-model="login.username"></div>
-              <div><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="login.password"></div>
+              <div ng-class="{'pc-form-error': loginForm.username.$dirty && loginForm.username.$invalid}"><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" autofocus ng-model="login.username" ng-model-options="{updateOn: 'blur'}"></div>
+              <div ng-class="{'pc-form-error': loginForm.password.$dirty && loginForm.password.$invalid}"><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="login.password"></div>
               <button type="submit" name="submit" value="sign in" ng-disabled="loginForm.$invalid">&nbsp;sign in</button>
           </form>
           <form name="signupForm" method="POST" action="/players" autocomplete="on" class="signup-form" novalidate>
               <h2>Not a Member?  Sign up Now!</h2>
-              <div><label class="username-label"></label><input name="uniqueName" required placeholder="choose a username" ng-model="signup.uniqueName"></div>
-              <div><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" ng-model="signup.username"></div>
-              <div><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="signup.password"></div>
-              <div><label class="repeat-password-label"></label><input name="repeatPassword" type="password" required placeholder="repeat password" ng-model="signup.repeatPassword"></div>
+              <div ng-class="{'pc-form-error': signupForm.uniqueName.$dirty && signupForm.uniqueName.$invalid}"><label class="username-label"></label><input name="uniqueName" required placeholder="choose a username" ng-model="signup.uniqueName"></div>
+              <div ng-class="{'pc-form-error': signupForm.username.$dirty && signupForm.username.$invalid}"><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" ng-model="signup.username" ng-model-options="{updateOn: 'blur'}"></div>
+              <div ng-class="{'pc-form-error': signupForm.password.$dirty && signupForm.password.$invalid}"><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="signup.password"></div>
+              <div ng-class="{'pc-form-error': signupForm.repeatPassword.$dirty && signupForm.repeatPassword.$invalid}"><label class="repeat-password-label"></label><input name="repeatPassword" type="password" required placeholder="repeat password" ng-model="signup.repeatPassword" pc-validate-equal="signup.password"></div>
               <button type="submit" name="submit" value="create account" ng-disabled="signupForm.$invalid">&nbsp;create account</button>
           </form>
           <div class="about-playchaser">
               Playchaser is ...
           </div>
         </div>
-        <script src="lib/angular-1.2.18/angular.min.js"></script>
+        <script src="lib/angular-1.3.0-beta.18/angular.min.js"></script>
+
         <!-- build:js js/login.min.js -->
         <script src="js/login.js"></script>
         <!-- endbuild -->
+        
+    
+        
     </body>
 </html>
