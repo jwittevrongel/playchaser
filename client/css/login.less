@@ -12,6 +12,10 @@ body:extend(.container-fixed)
     {
         border-radius: 4px;
     }
+    button:before
+	{
+		.fa-icon(lock);
+	}
 }
 
 .body, .header
@@ -43,9 +47,15 @@ form > div
     margin: (@line-height-computed / 2) 0;
 }
 
-.email-label, .password-label
+.email-label, .password-label, .username-label
 {
     &:extend(.input-group-addon);
+}
+
+.repeat-password-label 
+{
+	&:extend(.input-group-addon);
+	background: #555;
 }
 
 .email-label:before
@@ -58,9 +68,14 @@ form > div
 	.fa-icon(key);
 }
 
-button:before
+.repeat-password-label:before
 {
-	.fa-icon(lock);
+	.fa-reverse-icon(key);
+}
+
+.username-label:before
+{
+	.fa-icon(user);
 }
 
 .signup-form
@@ -68,6 +83,9 @@ button:before
     .make-xs-column(12);
     .make-sm-column(5);
     .make-lg-column(3);
+    button:before {
+    	.fa-icon(forward);
+    }
 }
 
 .about-playchaser

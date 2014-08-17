@@ -19,15 +19,20 @@
             <h1 class="masthead"><span class="playchaser-logo"></span> Playchaser</h1>
         </div>
         <div class="body">
-          <form name="loginForm" method="POST" action="/login" autocomplete="on" class="login-form">
+          <form name="loginForm" method="POST" action="/login" autocomplete="on" class="login-form" novalidate>
               <h2>Get Chasing!</h2>
-              <div><span class="email-label"></span><input name="username" type="email" required placeholder="e-mail address" autofocus></div>
-              <div><span class="password-label"></span><input name="password" type="password" required placeholder="password"></div>
-              <button type="submit" name="submit" value="sign in">&nbsp;sign in</button>
+              <div><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" autofocus ng-model="login.username"></div>
+              <div><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="login.password"></div>
+              <button type="submit" name="submit" value="sign in" ng-disabled="loginForm.$invalid">&nbsp;sign in</button>
           </form>
-          <div class="signup-form">
-              Not a Member?
-          </div>
+          <form name="signupForm" method="POST" action="/players" autocomplete="on" class="signup-form" novalidate>
+              <h2>Not a Member?  Sign up Now!</h2>
+              <div><label class="username-label"></label><input name="uniqueName" required placeholder="choose a username" ng-model="signup.uniqueName"></div>
+              <div><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" ng-model="signup.username"></div>
+              <div><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="signup.password"></div>
+              <div><label class="repeat-password-label"></label><input name="repeatPassword" type="password" required placeholder="repeat password" ng-model="signup.repeatPassword"></div>
+              <button type="submit" name="submit" value="create account" ng-disabled="signupForm.$invalid">&nbsp;create account</button>
+          </form>
           <div class="about-playchaser">
               Playchaser is ...
           </div>

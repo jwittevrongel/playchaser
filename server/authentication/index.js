@@ -58,12 +58,17 @@ module.exports = function(req, res, next) {
             return next();
         }
  
-        // allow user access to login / logout routes
-        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login', '/js/environment.js'];
+        // allow user access to login / logout routes, favicon, robots
+        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login', '/js/environment.js', '/favicon.ico'];
         for (var i = 0; i < allowedPaths.length; ++i) {
             if (req.url === allowedPaths[i]) {
                 return next();
             }
+        }
+        
+        // allow a POST to /players to create a new account
+        if (req.url == '/players' && req.method == 'POST') {
+        	return next();
         }
                 
         // if we got this far, we're not going to let them in         
@@ -75,7 +80,11 @@ module.exports = function(req, res, next) {
             if (extension !== '' && extension !== '.html') {
                 res.send(401);
             } else {
-                res.redirect('login.html');
+            	if (req.url == '/index.html' || req.url == '/') {
+                	res.redirect('login.html');
+                } else {
+                	res.redirect('login.html?timeout');
+                }	
             }
         }
         return; // stop the middleware chain here.
@@ -87,6 +96,44 @@ module.exports.configureRoutes = function(app) {
 	app.route('/login')
 		.post(passport.authenticate('local', {
     		successRedirect: 'index.html',
-    		failureRedirect: 'login.html'
+    		failureRedirect: 'login.html?tryagain'
 		}));
+		
+	app.route('/players')
+		.post(function(req, res) {
+			// easy check - validate passwords match
+			if (!req.body.password || req.body.password != req.body.repeatPassword) {
+				return res.redirect('login.html?passwordNoMatch');
+			}
+			// check if there is a collision
+			Player.findOne({idp: 'this', idpUsername: req.body.email}, function(err, player) {
+				if (player) {
+					return res.redirect('login.html?emailinuse');
+				}
+				Player.findOne({username: req.body.username}, function(err, player) {
+					if (player) {
+						return res.redirect('login.html?usernameinuse');
+					}
+					var theNewPlayer = new Player({
+        				idp: "this",
+						idpUsername: req.body.email,
+						username: req.body.username,
+						passwd: req.body.password,
+						profile: {
+							realName: req.body.username
+						}
+					});
+
+					theNewPlayer.save(function (err) {
+						if (err) {
+							return res.redirect('login.html?playerCreationError');
+						}
+						passport.authenticate('local', {
+							successRedirect: 'index.html#/player?new',
+			 		   		failureRedirect: 'login.html?playerCreationError'
+						})(req, res);
+					});
+				});	
+			});
+		});
 };
