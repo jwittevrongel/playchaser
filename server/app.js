@@ -2,6 +2,7 @@
 
 var express = require('express'),
     http = require('http'),
+    https = require('https'),
     path = require('path'),
     passport = require('passport'),
     authentication = require('./authentication'),
@@ -57,7 +58,12 @@ mongoose.connect(config.db.connectionString, function(e){
 		app.use(errorHandler());
 	}
 
-	var server = http.Server(app);
+	var server;
+	if (secure) {
+	}
+	else {
+		server = http.Server(app);
+	}
 	var wsServer = new WebSocketServer({
 		server: server,
 		authenticationMiddleware: [
