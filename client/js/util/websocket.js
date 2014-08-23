@@ -12,8 +12,7 @@
 					if (!isSupported) {
 						throw new Error("This browser does not support web sockets.");
 					}
-					options = options || {};
-					angular.extend(options, defaultOptions);
+					var _options = angular.extend(angular.copy(defaultOptions), options);
 					
 					var _socket = new $window.WebSocket(url);
 					var _listeners = { open: [], message: [], close: [], error: [] };
@@ -54,17 +53,17 @@
 					};
 					
 					var on = function(event, callback) {
-						if (!angular.isArray(_listeners.event)) {
+						if (!angular.isArray(_listeners[event])) {
 							throw new Error("Unsupported event: " + event);
 						}
-						_listeners.event.push(callback);
+						_listeners[event].push(callback);
 						return function() {
-							_listeners.event.splice(_listeners.event.indexOf(callback), 1);
+							_listeners[event].splice(_listeners[event].indexOf(callback), 1);
 						};
 					};
 					
-					if (options.linkedScope && angular.isFunction(options.linkedScope.on)) {
-						options.linkedScope.on('$destroy', function() {
+					if (_options.linkedScope && angular.isFunction(options.linkedScope.on)) {
+						_options.linkedScope.on('$destroy', function() {
 							_socket.close();
 						});
 					}

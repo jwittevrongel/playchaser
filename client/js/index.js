@@ -1,11 +1,13 @@
 (function(angular) {
 	"use strict";
 	angular.module('playchaser.index', ['playchaser'])
-		.run(['$log', 
-			function($log) {
-				var socket = new WebSocket("ws://localhost:3000/games/12345");
-				socket.onopen = function() {
+		.controller('mainPageCtrl', ['$scope', '$log', 'pcWebsocket', 'pcEnvironment',
+			function($scope, $log, PCWebsocket, pcEnvironment) {
+				var socket = new PCWebsocket(pcEnvironment.wsRoot + 'games/12345', {
+					linkedScope: $scope
+				});
+				socket.on('open', function() {
 					$log.info('yes');
-				};
+				});
 			}]);
 })(angular);
