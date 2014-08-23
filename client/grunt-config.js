@@ -87,6 +87,11 @@
 						cwd: 'client/img', 
 						src: ['**'],
 						dest: 'static/img'
+					}, {
+						expand: true, 
+						cwd: 'client/font', 
+						src: ['**'],
+						dest: 'static/font'
 					}]
 				}
 			}
