@@ -5,6 +5,19 @@ var path = require('path'),
     LocalStrategy = require('passport-local').Strategy,
     Player = require('../models/Player');
 
+
+var anonymousUrlPrefixes = [
+	'/lib/',
+	'/css/',
+    '/font/',
+    '/img',
+    '/robots.txt',
+    '/js/login.min.js', 
+    '/login',
+    '/js/environment.js',
+    '/favicon.ico'
+];
+
 // configure passport for local authentication
 passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -43,28 +56,15 @@ passport.deserializeUser(function(_id, done) {
 // middleware to enforce authentication on requests
 module.exports = function(req, res, next) {
     // enforce authentication for the request
+    
     if (!req.user) {
-        // some URL prefixes are exempt - anything in lib, fonts, or css is OK without auth
-        if (req.url.lastIndexOf('/lib/', 0) === 0) {
-            return next();
-        }
-        if (req.url.lastIndexOf('/css/', 0) === 0) {
-            return next();
-        }
-        if (req.url.lastIndexOf('/font/', 0) === 0) {
-            return next();
-        }
-        if (req.url.lastIndexOf('/img/', 0) === 0) {
-            return next();
-        }
- 
-        // allow user access to login / logout routes, favicon, robots
-        var allowedPaths = ['/robots.txt', '/login.html', '/js/login.min.js', '/login', '/js/environment.js', '/favicon.ico'];
-        for (var i = 0; i < allowedPaths.length; ++i) {
-            if (req.url === allowedPaths[i]) {
-                return next();
-            }
-        }
+    	// requests starting with these prefixes do not require the user
+    	// to be logged in yet.
+    	for (var i = 0; i < anonymousUrlPrefixes.length; ++i) {
+			if (req.url.lastIndexOf(anonymousUrlPrefixes[i], 0) === 0) {
+            	return next();
+        	}
+    	}
         
         // allow a POST to /players to create a new account
         if (req.url == '/players' && req.method == 'POST') {
