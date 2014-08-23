@@ -51,7 +51,7 @@ module.exports = function(req, res, next) {
         if (req.url.lastIndexOf('/css/', 0) === 0) {
             return next();
         }
-        if (req.url.lastIndexOf('/fonts/', 0) === 0) {
+        if (req.url.lastIndexOf('/font/', 0) === 0) {
             return next();
         }
         if (req.url.lastIndexOf('/img/', 0) === 0) {

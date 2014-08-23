@@ -5,7 +5,7 @@ var nconf = require('nconf'),
 	clientEnvironment = require('./clientEnvironment');
 
 var endsWith = function(toSearch, suffix) {
-    return toSearch.indexOf(suffix, this.length - suffix.length) !== -1;
+    return toSearch.indexOf(suffix, toSearch.length - suffix.length) !== -1;
 };
 
 nconf.argv()
@@ -24,7 +24,7 @@ for (var key in secure) {
 		secure[key.substring(0, key.length - 4)] = fs.readFileSync(__dirname + '/' + secure[key]);
 		delete secure[key];
 	}
-};
+}
 
-exports.secure = nconf.get('secure');
+exports.secure = secure;
 exports.clientEnvironment = clientEnvironment;

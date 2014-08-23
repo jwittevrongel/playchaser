@@ -16,11 +16,13 @@ var express = require('express'),
 	errorHandler = require('errorhandler'),
 	WebSocketServer = require('./websockets'),
 	MongoStore = require('connect-mongo')(session),
-	gameEngine = require('./game');
+	gameEngine = require('./game'),
+	middleware = require('./middleware');
 	
 var app = express();
 app.set('port', config.port || 3000);
 app.use(compression());
+app.use(middleware.staticExpires);
 app.use(morgan('dev'));
 var cookieParserInstance = cookieParser(config.session.secrets.cookie);
 app.use(cookieParserInstance);
@@ -52,14 +54,15 @@ mongoose.connect(config.db.connectionString, function(e){
 	app.use(passportSession);
 	app.use(authentication);
 	app.use(express.static(path.join(__dirname, '..', 'static')));
-
+	
 	// add error handler in development only
 	if ('development' == app.get('env')) {
 		app.use(errorHandler());
 	}
 
 	var server;
-	if (secure) {
+	if (config.secure) {
+		server = https.Server(config.secure, app);
 	}
 	else {
 		server = http.Server(app);
