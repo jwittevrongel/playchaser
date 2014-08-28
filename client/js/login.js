@@ -25,10 +25,12 @@
 			};
 		})
 
-		.controller('pcLoginCtrl', ['$scope', '$http',
-			function($scope, $http) {
+		.controller('pcLoginCtrl', ['$scope', '$http', '$window',
+			function($scope, $http, $window) {
 				$scope.doLogin = function(login) {
-					$http.post('login', login);
+					$http.post('login', login).success(function(result) {
+						$window.location.href = result.href;
+					});
 				};
 			}
 		]);
