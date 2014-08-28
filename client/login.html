@@ -12,13 +12,13 @@
         <link rel="apple-touch-icon" sizes="57x57" type="image/png" href="/img/icon57.png">
         <!-- build:css css/login.min.css -->
         <link rel="stylesheet" href="css/login.css">
-        <!-- endbuild -->
+        <!-- /build -->
     </head>
-    <body>
+    <body ng-controller="pcLoginCtrl">
         <div class="header">
             <h1 class="masthead"><span class="playchaser-logo"></span> Playchaser</h1>
         </div>
-        <div class="body" ng-controller="pcLoginCtrl">
+        <div class="body">
           <form name="loginForm" autocomplete="on" class="login-form" novalidate ng-submit="doLogin(login)">
               <h2>Get Chasing!</h2>
               <div ng-class="{'pc-form-error': loginForm.username.$dirty && loginForm.username.$invalid}"><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" autofocus ng-model="login.username" ng-model-options="{updateOn: 'blur'}"></div>
@@ -41,7 +41,7 @@
 
         <!-- build:js js/login.min.js -->
         <script src="js/login.js"></script>
-        <!-- endbuild -->
+        <!-- /build -->
         
     
         
