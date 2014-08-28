@@ -48,24 +48,28 @@ gulp.task('client-html', function() {
 		
 });
 
-gulp.task('client-login-js', function() {
-	return gulp.src('client/js/login.js')
-		.pipe(uglify('login.min.js', { outSourceMap: true }))
-		.pipe(gulp.dest('static/js'));
+gulp.task('client-copy', function() {
+	return eventstream.merge.apply(eventstream, ['lib', 'font', 'img'].map(function(path) {
+		return gulp.src('client/' + path + '/**/*')
+			.pipe(gulp.dest('static/' + path));
+	}));
 });
 
-gulp.task('client-index-js', function() {
-	return gulp.src('client/js/index.js')
-		.pipe(uglify('index.min.js', { outSourceMap: true }))
-		.pipe(gulp.dest('static/js'));
+gulp.task('client-main-js', function() {
+	return eventstream.merge.apply(eventstream, ['index', 'login'].map(function(mainfile) {
+		return gulp.src('client/js/' + mainfile + '.js')
+			.pipe(uglify(mainfile + '.min.js'))
+			.pipe(gulp.dest('static/js'));
+		})
+	);
 });
 
 gulp.task('client-playchaser-js', function() {
 	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment_test.js'])
-		.pipe(uglify('playchaser.min.js', { outSourceMap: true }))
+		.pipe(uglify('playchaser.min.js'))
 		.pipe(gulp.dest('static/js'));
 });
 
-gulp.task('client-js', ['client-login-js', 'client-index-js', 'client-playchaser-js']);
-gulp.task('client-all', ['client-less', 'client-html', 'client-js']);
+gulp.task('client-js', ['client-main-js', 'client-playchaser-js']);
+gulp.task('client-all', ['client-less', 'client-html', 'client-js', 'client-copy']);
 gulp.task('default', ['all-jshint', 'client-all']);
