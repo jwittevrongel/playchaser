@@ -83,7 +83,7 @@ module.exports = function(req, res, next) {
             	if (req.url == '/index.html' || req.url == '/') {
                 	res.redirect('login.html');
                 } else {
-                	res.redirect('login.html?timeout');
+                	res.redirect('login.html#/login?timeout');
                 }	
             }
         }
@@ -96,23 +96,23 @@ module.exports.configureRoutes = function(app) {
 	app.route('/login')
 		.post(passport.authenticate('local', {
     		successRedirect: 'index.html',
-    		failureRedirect: 'login.html?tryagain'
+    		failureRedirect: 'login.html#/login?tryagain'
 		}));
 		
 	app.route('/players')
 		.post(function(req, res) {
 			// easy check - validate passwords match
 			if (!req.body.password || req.body.password != req.body.repeatPassword) {
-				return res.redirect('login.html?passwordNoMatch');
+				return res.redirect('login.html#/signup?passwordmatch');
 			}
 			// check if there is a collision
 			Player.findOne({idp: 'this', idpUsername: req.body.email}, function(err, player) {
 				if (player) {
-					return res.redirect('login.html?emailinuse');
+					return res.redirect('login.html#/signup?emailinuse');
 				}
 				Player.findOne({username: req.body.username}, function(err, player) {
 					if (player) {
-						return res.redirect('login.html?usernameinuse');
+						return res.redirect('login.html#/signup?usernameinuse');
 					}
 					var theNewPlayer = new Player({
         				idp: "this",
@@ -126,11 +126,11 @@ module.exports.configureRoutes = function(app) {
 
 					theNewPlayer.save(function (err) {
 						if (err) {
-							return res.redirect('login.html?playerCreationError');
+							return res.redirect('login.html#/signup?playercreationerror');
 						}
 						passport.authenticate('local', {
 							successRedirect: 'index.html#/player?new',
-			 		   		failureRedirect: 'login.html?playerCreationError'
+			 		   		failureRedirect: 'login.html#/signup?playercreationerror'
 						})(req, res);
 					});
 				});	

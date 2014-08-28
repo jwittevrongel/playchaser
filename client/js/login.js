@@ -23,6 +23,14 @@
 					});
 				}
 			};
-		});
+		})
+
+		.controller('pcLoginCtrl', ['$scope', '$http',
+			function($scope, $http) {
+				$scope.doLogin = function(login) {
+					$http.post('login', login);
+				};
+			}
+		]);
 		
 })(angular);
