@@ -2,7 +2,7 @@
 
 var express = require('express'),
     http = require('http'),
-    https = require('https'),
+    spdy = require('spdy'),
     path = require('path'),
     passport = require('passport'),
     authentication = require('./authentication'),
@@ -62,7 +62,7 @@ mongoose.connect(config.db.connectionString, function(e){
 
 	var server;
 	if (config.secure) {
-		server = https.Server(config.secure, app);
+		server = spdy.createServer(config.secure, app);
 	}
 	else {
 		server = http.Server(app);
