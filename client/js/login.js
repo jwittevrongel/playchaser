@@ -25,14 +25,19 @@
 			};
 		})
 
-		.controller('pcLoginCtrl', ['$scope', '$http', '$window',
-			function($scope, $http, $window) {
-				$scope.doLogin = function(login) {
-					$http.post('login', login).success(function(result) {
-						$window.location.href = result.href;
-					});
-				};
+		.controller('pcLoginCtrl', function($scope, $http, $window, $location) {
+			$scope.errorMessages = {};
+			if ($location.hash === '/login?timeout') {
+				$scope.errorMessages.login = "Your playchaser session timed out. Please log in again.";
 			}
-		]);
+			$scope.doLogin = function(login) {
+				$scope.errorMessages.login = "";
+				$http.post('login', login).success(function(result) {
+					$window.location.href = result.href;
+				}).error(function() {
+					$scope.errorMessages.login = "Invalid username or password. Please try again.";
+				});
+			};
+		});
 		
 })(angular);

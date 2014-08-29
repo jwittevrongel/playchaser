@@ -9,7 +9,8 @@ var gulp = require('gulp'),
     htmlmin = require('gulp-htmlmin'),
     glob = require('glob'),
     eventstream = require('event-stream'),
-    uglify = require('gulp-uglifyjs');
+    uglify = require('gulp-uglifyjs'),
+    ngAnnotate = require('gulp-ng-annotate');
 
 gulp.task('all-jshint', function() {
 	return gulp.src(['gulpfile.js', 'server/**/*.js', 'client/**/*.js', '!client/lib/**/*'])
@@ -58,6 +59,7 @@ gulp.task('client-copy', function() {
 gulp.task('client-main-js', function() {
 	return eventstream.merge.apply(eventstream, ['index', 'login'].map(function(mainfile) {
 		return gulp.src('client/js/' + mainfile + '.js')
+			.pipe(ngAnnotate({add: true}))
 			.pipe(uglify(mainfile + '.min.js'))
 			.pipe(gulp.dest('static/js'));
 		})
@@ -66,6 +68,7 @@ gulp.task('client-main-js', function() {
 
 gulp.task('client-playchaser-js', function() {
 	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment_test.js'])
+		.pipe(ngAnnotate({add: true}))
 		.pipe(uglify('playchaser.min.js'))
 		.pipe(gulp.dest('static/js'));
 });

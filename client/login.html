@@ -21,6 +21,7 @@
         <div class="body">
           <form name="loginForm" autocomplete="on" class="login-form" novalidate ng-submit="doLogin(login)">
               <h2>Get Chasing!</h2>
+              <div class="loginError" ng-show="errorMessages.login">{{ errorMessages.login }}</div>
               <div ng-class="{'pc-form-error': loginForm.username.$dirty && loginForm.username.$invalid}"><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" autofocus ng-model="login.username" ng-model-options="{updateOn: 'blur'}"></div>
               <div ng-class="{'pc-form-error': loginForm.password.$dirty && loginForm.password.$invalid}"><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="login.password"></div>
               <button type="submit" name="submit" value="sign in" ng-disabled="loginForm.$invalid">&nbsp;sign in</button>
