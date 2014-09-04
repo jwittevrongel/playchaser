@@ -32,10 +32,23 @@
 			}
 			$scope.doLogin = function(login) {
 				$scope.errorMessages.login = "";
-				$http.post('login', login).success(function(result) {
-					$window.location.href = result.href;
+				$http.post('login', login).success(function(data) {
+					$window.location.href = data.href;
 				}).error(function() {
 					$scope.errorMessages.login = "Invalid username or password. Please try again.";
+				});
+			};
+
+			$scope.doSignup = function (signup) {
+				$scope.errorMessages.signup = "";
+				$http.post('players', signup).success(function(data) {
+					$window.location.href = data.href;
+				}).error(function(data) {
+					if (data.message) {
+						$scope.errorMessages.signup = data.message;
+					} else {
+						$scope.errorMessages.signup = "An unknown error occurred.  Please try again.";
+					}
 				});
 			};
 		});

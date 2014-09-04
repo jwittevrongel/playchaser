@@ -16,6 +16,15 @@ module.exports = function(req, res, next) {
     if (req.url.lastIndexOf('/font/', 0) === 0) {
         setHeadersToCacheForALongTime(res);
     }
+    if (req.url.lastIndexOf('/img/', 0) === 0) {
+        setHeadersToCacheForALongTime(res);
+    }
+    if (req.url.lastIndexOf('/js/', 0) === 0) {
+        setHeadersToCacheForALongTime(res);
+    }
+    if (req.url.lastIndexOf('/css/', 0) === 0) {
+        setHeadersToCacheForALongTime(res);
+    }
     
     next(); 
 };

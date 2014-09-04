@@ -12,7 +12,7 @@ var anonymousUrlPrefixes = [
     '/font/',
     '/img',
     '/robots.txt',
-    '/js/login.min.js', 
+    '/js/login.min', 
     '/login',
     '/js/environment.js',
     '/favicon.ico'
@@ -74,11 +74,11 @@ module.exports = function(req, res, next) {
         // if we got this far, we're not going to let them in         
         // decide whether to deny with a 401 or redirect (302) based on the request
         if ( ((req.method !== 'GET') && (req.method !== 'HEAD') && (req.method !== 'OPTIONS')) || (req.path.lastIndexOf('/api/', 0) === 0)) {
-            res.status(401);
+            res.status(401).end();
         } else {
             var extension = path.extname(req.url);
             if (extension !== '' && extension !== '.html') {
-                res.status(401);
+                res.status(401).end();
             } else {
             	if (req.url == '/index.html' || req.url == '/') {
                 	res.redirect('login.html');
@@ -102,27 +102,27 @@ module.exports.configureRoutes = function(app) {
         );
 		
 	app.route('/players')
-		.post(function(req, res) {
+		.post(function(req, res, next) {
 			// easy check - validate passwords match
 			if (!req.body.password || req.body.password != req.body.repeatPassword) {
 				return res.status(400).send({src: 'signup', err: 'passwordmatch', message: 'The supplied passwords do not match.'});
 			}
 			// check if there is a collision
-			Player.findOne({idp: 'this', idpUsername: req.body.email}, function(err, player) {
+			Player.findOne({idp: 'this', idpUsername: req.body.username}, function(err, player) {
 				if (player) {
 					return res.status(400).send({ src: 'signup', err: 'emailinuse', message: 'There is already an account registered with that e-mail address.'});
 				}
-				Player.findOne({username: req.body.username}, function(err, player) {
+				Player.findOne({username: req.body.uniqueName}, function(err, player) {
 					if (player) {
 						return res.status(400).send({ src: 'signup', err: 'usernameinuse', message: 'There is already an account registered with that username.'});
 					}
 					var theNewPlayer = new Player({
         				idp: "this",
-						idpUsername: req.body.email,
-						username: req.body.username,
+						idpUsername: req.body.username,
+						username: req.body.uniqueName,
 						passwd: req.body.password,
 						profile: {
-							realName: req.body.username
+							realName: req.body.uniqueName
 						}
 					});
 
@@ -130,10 +130,13 @@ module.exports.configureRoutes = function(app) {
 						if (err) {
 							return res.status(500).send({ src: 'server', err: 'unspecified', message: 'There was an error creating your account. Try again later.'});
 						}
-						passport.authenticate('local', {
-							successRedirect: 'index.html#/player?new',
-			 		   		failureRedirect: 'login.html#/signup?playercreationerror'
-						})(req, res);
+						passport.authenticate('local', function(err, user) {
+                            if (err || !user) {
+                                return res.status(500).send({ src: 'server', err: 'unspecified', message: 'There was an error creating your account. Try again later.'});
+                            }
+                            req.login();
+                            return res.status(200).send({ href: 'index.html#/player?new' });
+                        })(req, res, next);
 					});
 				});	
 			});
