@@ -1,0 +1,9 @@
+---
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: save iptables
+  command: iptables-save
+
+- name: restart iptables
+  service: name=iptables state=restarted

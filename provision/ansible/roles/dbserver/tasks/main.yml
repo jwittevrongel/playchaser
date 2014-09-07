@@ -1,0 +1,7 @@
+---
+- name: Create the yum repo for mongodb
+  copy: src=yum-mongodb.repo dest=/etc/yum.repos.d/mongodb.repo
+
+- name: Install mongodb
+  yum: name=mongodb-org state=installed
+  

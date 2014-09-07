@@ -1,0 +1,57 @@
+---
+- name: Create the yum repo for nginx
+  copy: src=yum-nginx.repo dest=/etc/yum.repos.d/mongodb.repo
+
+- name: Install nginx
+  yum: name=nginx state=present
+
+- name: make ssl certificate directory
+  command: mkdir -m 0700 /etc/nginx/ssl creates=/etc/nginx/ssl
+  
+- name: install ssl certificate and key for development
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=California/L=San Diego/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca creates=/etc/nginx/ssl/server.crt
+  when: provision_environment == "DEV"
+  notify: restart nginx
+
+- name: install ssl certificate for production
+  copy: src=ssl-server.crt dest=/etc/nginx/ssl/server.crt
+  when: provision_environment != "DEV"
+  notify: restart nginx
+
+- name: install ssl private key for production
+  copy: src=ssl-server.key dest=/etc/nginx/ssl/server.key 
+  when: provision_environment != "DEV"
+  notify: restart nginx
+
+- name: secure ssl certificate directory
+  command: chown -R nginx:nginx /etc/nginx/ssl
+
+- name: secure ssl certificate file
+  command: chmod 0400 /etc/nginx/ssl/server.crt
+
+- name: secure ssl key file
+  command: chmod 0400 /etc/nginx/ssl/server.key
+
+- name: Copy nginx configuration
+  template: src=nginx-default.conf.j2 dest=/etc/nginx/conf.d/default.conf
+  notify: restart nginx
+
+- name: Apache | get iptables rules
+  shell: iptables -L
+  register: iptablesrules
+  always_run: yes
+  changed_when: false
+
+- name: open port 80
+  command: /sbin/iptables -I INPUT 1 -p tcp --dport http -j ACCEPT -m comment --comment "nginx-80"
+  when: iptablesrules.stdout.find("nginx-80") == -1
+  notify:
+    - save iptables
+    - restart iptables
+
+- name: open port 443
+  command: /sbin/iptables -I INPUT 1 -p tcp --dport https -j ACCEPT -m comment --comment "nginx-443"
+  when: iptablesrules.stdout.find("nginx-443") == -1
+  notify:
+    - save iptables
+    - restart iptables

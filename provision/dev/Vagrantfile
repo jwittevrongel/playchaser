@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.define 'playchaser' do |machine|
+    machine.vm.hostname = 'playchaser'
+    machine.vm.box = "parallels/centos-6.5"
+    machine.vm.network "public_network"
+    machine.vm.synced_folder "../..", "/playchaser"
+    # machine.vm.provider "parallels" do |v|
+    #   v.name = "playchaser-devel"
+    #   v.update_guest_tools = true
+    # end
+    machine.vm.provision :ansible do |ansible|
+      ansible.groups = {
+        "webservers" => ["playchaser"],
+        "dbservers" => ["playchaser"],
+        "all_groups:children" => ["webservers", "dbservers"]
+      }
+      ansible.sudo = true
+      ansible.playbook = "../ansible/site.yml"
+      ansible.extra_vars = {
+        provision_environment: "DEV"
+      }
+    end
+  end
+end

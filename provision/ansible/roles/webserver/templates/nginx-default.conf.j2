@@ -1,0 +1,61 @@
+# 4 identical nodejs instances running on different localhost ports
+upstream localhost_node {
+    server 127.0.0.1:8001;
+    server 127.0.0.1:8002;
+    server 127.0.0.1:8003;
+    server 127.0.0.1:8004;
+}
+
+# handle upgrade requests
+map $http_connection $connection_upgrade { 
+    default upgrade;
+    '' close;
+}
+
+# https, spdy, wss
+server {
+    listen              443 ssl spdy;
+    server_name         www.playchaser.com;
+    root                /playchaser/static;
+    index               index.html;
+    
+    ssl_certificate     /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+
+    add_header Alternate-Protocol 443:npn-spdy/3;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+    set_real_ip_from 192.168.240.0/24;
+    real_ip_header proxy_protocol;
+
+    
+
+    location / {
+        try_files $uri $uri/ @nodejs;
+    }
+
+    # proxy to local node instance
+    location @nodejs {
+        proxy_pass          http://localhost_node;
+        proxy_http_version  1.1;
+
+        proxy_set_header    Upgrade           $http_upgrade;
+        proxy_set_header    Connection        $connection_upgrade;
+        proxy_set_header    Host              $host;
+        proxy_set_header    X-Real-IP         $remote_addr;
+        proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header    X-Forwarded-Proto $scheme;
+    }
+}
+
+# http and ws redirect to secure versions
+server {
+    listen              80;
+    server_name         www.playchaser.com;
+    if ($scheme = http) {
+        return 301 https://$server_name$request_uri;
+    }
+    if ($scheme = ws) {
+        return 301 wss://$server_name$request_uri;
+    }
+}
