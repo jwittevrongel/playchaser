@@ -1,0 +1,5 @@
+---
+dependencies:
+  - { role: dbserver, provision_environment: DEV }
+  - { role: webserver, provision_environment: DEV }
+  

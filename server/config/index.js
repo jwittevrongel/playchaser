@@ -14,6 +14,7 @@ nconf.argv()
      .file('application', __dirname + '/application.json');
 
 exports.port = nconf.get('port');
+exports.cluster_processes = nconf.get('cluster_processes');
 exports.db = nconf.get('db');
 exports.initialSetup = nconf.get('initialSetup');
 exports.session = nconf.get('session');

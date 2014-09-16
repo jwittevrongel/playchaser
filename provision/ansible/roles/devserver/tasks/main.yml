@@ -1,0 +1,10 @@
+---
+- name: mongodb | start mongod
+  service: name=mongod state=started
+
+- name: playchaser | migrate DB schema for DEV
+  command: /playchaser/server/bin/migrate
+  sudo: yes
+  sudo_user: playchaser
+  environment: 
+    NODE_PATH: /playchaser/node_modules

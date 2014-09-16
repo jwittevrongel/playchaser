@@ -1,0 +1,11 @@
+/playchaser/log/*.log {
+        daily
+        missingok
+        rotate 52
+        compress
+        delaycompress
+        notifempty
+        create 640 playchaser playchaser
+        sharedscripts
+        copytruncate
+}

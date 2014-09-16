@@ -9,22 +9,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     machine.vm.hostname = 'playchaser'
     machine.vm.box = "parallels/centos-6.5"
     machine.vm.network "public_network"
-    machine.vm.synced_folder "../..", "/playchaser"
+    machine.vm.synced_folder "../../server", "/playchaser-server"
+    machine.vm.synced_folder "../../static", "/playchaser-static"
+    machine.vm.synced_folder "../..", "/playchaser-root"
+
     # machine.vm.provider "parallels" do |v|
     #   v.name = "playchaser-devel"
     #   v.update_guest_tools = true
     # end
     machine.vm.provision :ansible do |ansible|
       ansible.groups = {
-        "webservers" => ["playchaser"],
-        "dbservers" => ["playchaser"],
-        "all_groups:children" => ["webservers", "dbservers"]
+        "devservers" => ["playchaser"],
+        "all_groups:children" => ["devservers"]
       }
       ansible.sudo = true
       ansible.playbook = "../ansible/site.yml"
-      ansible.extra_vars = {
-        provision_environment: "DEV"
-      }
     end
   end
 end

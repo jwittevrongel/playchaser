@@ -1,57 +1,113 @@
 ---
-- name: Create the yum repo for nginx
+- name: nginx | create the yum repo for nginx
   copy: src=yum-nginx.repo dest=/etc/yum.repos.d/mongodb.repo
 
-- name: Install nginx
+- name: nginx | install nginx
   yum: name=nginx state=present
 
-- name: make ssl certificate directory
+- name: nginx | make ssl certificate directory
   command: mkdir -m 0700 /etc/nginx/ssl creates=/etc/nginx/ssl
   
-- name: install ssl certificate and key for development
+- name: nginx | install ssl certificate and key for development
   command: openssl req -new -nodes -x509 -subj "/C=US/ST=California/L=San Diego/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca creates=/etc/nginx/ssl/server.crt
   when: provision_environment == "DEV"
-  notify: restart nginx
+  notify: nginx | restart nginx
 
-- name: install ssl certificate for production
+- name: nginx | install ssl certificate for production
   copy: src=ssl-server.crt dest=/etc/nginx/ssl/server.crt
   when: provision_environment != "DEV"
-  notify: restart nginx
+  notify: nginx | restart nginx
 
-- name: install ssl private key for production
+- name: nginx | install ssl private key for production
   copy: src=ssl-server.key dest=/etc/nginx/ssl/server.key 
   when: provision_environment != "DEV"
-  notify: restart nginx
+  notify: nginx | restart nginx
 
-- name: secure ssl certificate directory
+- name: nginx | secure ssl certificate directory
   command: chown -R nginx:nginx /etc/nginx/ssl
 
-- name: secure ssl certificate file
+- name: nginx | secure ssl certificate file
   command: chmod 0400 /etc/nginx/ssl/server.crt
 
-- name: secure ssl key file
+- name: nginx | secure ssl key file
   command: chmod 0400 /etc/nginx/ssl/server.key
 
-- name: Copy nginx configuration
+- name: nginx | copy nginx configuration
   template: src=nginx-default.conf.j2 dest=/etc/nginx/conf.d/default.conf
-  notify: restart nginx
+  notify: nginx | restart nginx
 
-- name: Apache | get iptables rules
+- name: iptables | get iptables rules
   shell: iptables -L
   register: iptablesrules
   always_run: yes
   changed_when: false
 
-- name: open port 80
+- name: iptables | open port 80
   command: /sbin/iptables -I INPUT 1 -p tcp --dport http -j ACCEPT -m comment --comment "nginx-80"
   when: iptablesrules.stdout.find("nginx-80") == -1
   notify:
-    - save iptables
-    - restart iptables
+    - iptables | save iptables
+    - iptables | restart iptables
 
-- name: open port 443
+- name: iptables | open port 443
   command: /sbin/iptables -I INPUT 1 -p tcp --dport https -j ACCEPT -m comment --comment "nginx-443"
   when: iptablesrules.stdout.find("nginx-443") == -1
   notify:
-    - save iptables
-    - restart iptables
+    - iptables | save iptables
+    - iptables | restart iptables
+
+- name: nodejs | Install Extra Packages for Enterprise Linux (EPEL)
+  yum: name=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm state=present
+
+- name: nodejs | Install NodeJS
+  yum: name=nodejs state=present
+
+- name: nodejs | Install NPM
+  yum: name=npm state=present
+
+- name: playchaser | Create Group for playchaser application
+  group: name=playchaser state=present
+
+- name: playchaser | Create user for playcahser application
+  user: name=playchaser state=present group=playchaser
+
+- name: playchaser | create directory for playchaser application
+  command: mkdir -m 0755 /playchaser creates=/playchaser
+
+- name: playchaser | install playchaser application in development
+  command: ln -sf {{ item.src }} {{ item.dest }} creates={{ item.dest }}
+  with_items:
+    - { src: '/playchaser-root/package.json', dest: '/playchaser/package.json' }
+    - { src: '/playchaser-static', dest: '/playchaser/static' }
+    - { src: '/playchaser-server', dest: '/playchaser/server' }
+  when: provision_environment == "DEV"
+
+- name: playchaser | install playchaser application in production
+  command: echo "TODO use git to checkout application"
+  when: provision_environment != "DEV"
+
+- name: playcahser | create log folder
+  command: mkdir /playchaser/log creates=/playchaser/log
+
+- name: playchaser | update npm modules for playchaser application
+  command: npm install chdir=/playchaser creates=/playchaser/node_modules
+
+- name: playchaser | install gulp on production
+  command: npm install --global gulp
+  when: provision_environment != "DEV"
+
+- name: playchaser | build playchaser application on production
+  command: gulp chdir=/playchaser creates=/playchaser/static
+  when: provision_environment != "DEV"
+
+- name: playchaser | set ownership on playchaser application
+  command: chown -R playchaser:playchaser /playchaser
+
+- name: playchaser | set up log rotation
+  copy: src=logrotate.d_playchaser-app dest=/etc/logrotate.d/playchaser-app
+
+- name: playchaser | Install Playchaser Init Script
+  copy: src=init.d_playchaser-app dest=/etc/init.d/playchaser-app mode=0755
+  notify: 
+    - playchaser | add playchaser-app to init
+    - playchaser | start playchaser

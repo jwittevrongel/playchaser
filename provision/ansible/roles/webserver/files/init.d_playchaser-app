@@ -1,0 +1,120 @@
+#!/bin/sh
+#
+# playchaser-app        Startup script for playchaser-app
+#
+# chkconfig: - 88 12
+# processname: node
+# description: Playchaser is a NodeJS application for online multi-player boardgaming
+#
+### BEGIN INIT INFO
+# Provides: playchaser
+# Required-Start: $local_fs $remote_fs $network
+# Required-Stop: $local_fs $remote_fs $network
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop playchaser-app
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+if [ -L $0 ]; then
+    initscript=`/bin/readlink -f $0`
+else
+    initscript=$0
+fi
+
+sysconfig=`/bin/basename $initscript`
+
+if [ -f /etc/sysconfig/$sysconfig ]; then
+    . /etc/sysconfig/$sysconfig
+fi
+
+nodejs=$(which node)
+prog=`basename $nodejs`
+logfile=${LOGFILE-/playchaser/log/application.log}
+lockfile=${LOCKFILE-/var/lock/subsys/playchaser-app}
+user=playchaser
+group=playchaser
+RETVAL=0
+server=playchaser-app
+node_entrypoint=/playchaser/server/clustered
+node_modules=/playchaser/node_modules
+
+do_start()
+{
+    if [ ! -f "$lockfile" ] ; then
+        date +"%Y-%m-%d %T Starting $server" >> $logfile
+        echo -n $"Starting $server: "
+        touch $logfile
+        chown ${user}:${group} $logfile
+        runuser -l "$user" -g "$group" -c "NODE_ENV=production NODE_PATH=$node_modules $nodejs $node_entrypoint >> $logfile 2>&1 &" && echo_success || echo_failure
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && touch "$lockfile"
+    else
+        echo "$server is locked."
+        RETVAL=1
+    fi
+}
+ 
+do_stop()
+{
+    date +"%Y-%m-%d %T Stopping $server" >> $logfile
+    echo -n $"Stopping $server: "
+    pid=`ps -aefw | grep "$nodejs $node_entrypoint" | grep -v " grep " | awk '{print $2}'`
+    kill $pid > /dev/null 2>&1 && echo_success || echo_failure
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f "$lockfile"
+ 
+    if [ "$pid" = "" -a -f "$lockfile" ]; then
+        rm -f "$lockfile"
+        echo "Removed lockfile ( $lockfile )"
+    fi
+}
+
+do_reload()
+{
+    date +"%Y-%m-%d %T Stopping $server" >> $logfile
+    echo -n $"Stopping $server: "
+    pid=`ps -aefw | grep "$nodejs $node_entrypoint" | grep -v " grep " | awk '{print $2}'`
+    kill -HUP $pid > /dev/null 2>&1 && echo_success || echo_failure
+    RETVAL=$?
+    echo
+}
+ 
+do_status()
+{
+   pid=`ps -aefw | grep "$nodejs $node_entrypoint" | grep -v " grep " | awk '{print $2}'`
+   if [ "$pid" != "" ]; then
+     echo "$nodejs $server (pid $pid) is running..."
+   else
+     echo "$nodejs $server is stopped"
+   fi
+}
+ 
+case "$1" in
+    start)
+        do_start
+        ;;
+    stop)
+        do_stop
+        ;;
+    status)
+        do_status
+        ;;
+    restart)
+        do_stop
+        do_start
+        RETVAL=$?
+        ;;
+    reload)
+        do_reload
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart|reload}"
+        RETVAL=1
+esac
+ 
+exit $RETVAL

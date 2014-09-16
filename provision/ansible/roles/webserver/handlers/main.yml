@@ -1,9 +1,15 @@
 ---
-- name: restart nginx
+- name: nginx | restart nginx
   service: name=nginx state=restarted
 
-- name: save iptables
+- name: iptables | save iptables
   command: iptables-save
 
-- name: restart iptables
+- name: iptables | restart iptables
   service: name=iptables state=restarted
+
+- name: playchaser | add playchaser-app to init
+  service: name=playchaser-app enabled=yes
+
+- name: playchaser | start playchaser
+  command: service playchaser-app restart
