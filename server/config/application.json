@@ -3,9 +3,5 @@
     "cluster_processes": 2,
     "session": {
         "timeout": 28800000
-    },
-    "secure": {
-    	"pfxFile": "ssl.pfx",
-    	"passphraseFile": "secure.passwd"
     }
 }

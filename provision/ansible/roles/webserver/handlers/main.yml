@@ -3,7 +3,7 @@
   service: name=nginx state=restarted
 
 - name: iptables | save iptables
-  command: iptables-save
+  command: /sbin/service iptables save
 
 - name: iptables | restart iptables
   service: name=iptables state=restarted

@@ -2,7 +2,8 @@
 
 exports.configureRoutes = function(app) {
 	app.route('/js/environment.js').get(function(req, res) {
-		var urlSuffix = (req.connection.encrypted ? 's' : '') + '://' + req.headers.host + '/';
+		var connectionIsEncrypted = req.connection.encrypted || req.get('X-Forwarded-Proto') === 'https';
+		var urlSuffix = (connectionIsEncrypted ? 's' : '') + '://' + req.headers.host + '/';
 
 		res.type('.js');
 		res.end(
