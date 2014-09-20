@@ -12,15 +12,38 @@
 						}
 					});
 					
-					ngModelCtrl.$parsers.push(function(newValue) {
+					ngModelCtrl.$validators.pcValidateEqual = function(newValue) {
 						if (!(angular.isDefined(newValue) && newValue.length)) {
-							ngModelCtrl.setValidity('pcValidateEqual', true);
-							return newValue;
+							return true;
 						}
-						var isValid = (newValue === $scope.$eval($attrs.pcValidateEqual));
-						ngModelCtrl.$setValidity('pcValidateEqual', isValid);
-						return isValid ? newValue : undefined;
-					});
+						return (newValue === $scope.$eval($attrs.pcValidateEqual));
+					};
+				}
+			};
+		})
+
+		.directive('pcUserAvailable', function($http, $q) {
+			return {
+				restrict: 'A',
+				require: 'ngModel',
+				link: function($scope, $element, $attrs, ngModelCtrl) {
+					ngModelCtrl.$asyncValidators.userAvailable = function(val) {
+						var deferred = $q.defer();
+						var config = {
+							params: {
+								exists: 1
+							}
+						};
+						config.params[$attrs.pcUserAvailable] = val;
+						$http.get('players', config).success(function() { 
+								deferred.reject(false); 
+							})
+							.error(function() { 
+								deferred.resolve(true); 
+							});
+
+						return deferred.promise;
+					};
 				}
 			};
 		})

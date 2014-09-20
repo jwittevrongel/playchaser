@@ -28,8 +28,8 @@
           </form>
           <form name="signupForm" autocomplete="on" class="signup-form" novalidate ng-submit="doSignup(signup)">
               <h2>Not a Member?  Sign up Now!</h2>
-              <div ng-class="{'pc-form-error': signupForm.uniqueName.$dirty && signupForm.uniqueName.$invalid}"><label class="username-label"></label><input name="uniqueName" required placeholder="choose a username" ng-model="signup.uniqueName"></div>
-              <div ng-class="{'pc-form-error': signupForm.username.$dirty && signupForm.username.$invalid}"><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" ng-model="signup.username" ng-model-options="{updateOn: 'blur'}"></div>
+              <div ng-class="{'pc-form-error': signupForm.uniqueName.$dirty && signupForm.uniqueName.$invalid}"><label class="username-label"></label><input name="uniqueName" required placeholder="choose a username" ng-model="signup.uniqueName" ng-model-options="{ debounce : { 'default' : 500, blur : 0 } }" pc-user-available="uniqueName"></div>
+              <div ng-class="{'pc-form-error': signupForm.username.$dirty && signupForm.username.$invalid}"><label class="email-label"></label><input name="username" type="email" required placeholder="e-mail address" ng-model="signup.username" ng-model-options="{updateOn: 'blur', debounce : { 'default' : 500, blur : 0 } }" pc-user-available="username"></div>
               <div ng-class="{'pc-form-error': signupForm.password.$dirty && signupForm.password.$invalid}"><label class="password-label"></label><input name="password" type="password" required placeholder="password" ng-model="signup.password"></div>
               <div ng-class="{'pc-form-error': signupForm.repeatPassword.$dirty && signupForm.repeatPassword.$invalid}"><label class="repeat-password-label"></label><input name="repeatPassword" type="password" required placeholder="repeat password" ng-model="signup.repeatPassword" pc-validate-equal="signup.password"></div>
               <button type="submit" name="submit" value="create account" ng-disabled="signupForm.$invalid">&nbsp;create account</button>

@@ -66,14 +66,19 @@ module.exports = function(req, res, next) {
         	}
     	}
         
-        // allow a POST to /players to create a new account
-        if (req.url == '/players' && req.method == 'POST') {
-        	return next();
-        }
+        // allow some interactions with /players to facilitate creating new accounts
+        if (req.path == '/players') {
+            if (req.method == 'POST') {
+                return next();
+            }
+            if (req.method == 'GET' && req.query.hasOwnProperty('exists')) {
+                return next();
+            }
+        } 
                 
         // if we got this far, we're not going to let them in         
         // decide whether to deny with a 401 or redirect (302) based on the request
-        if ( ((req.method !== 'GET') && (req.method !== 'HEAD') && (req.method !== 'OPTIONS')) || (req.path.lastIndexOf('/api/', 0) === 0)) {
+        if ( (req.method !== 'GET') && (req.method !== 'HEAD') && (req.method !== 'OPTIONS') ) {
             res.status(401).end();
         } else {
             var extension = path.extname(req.url);
@@ -140,5 +145,34 @@ module.exports.configureRoutes = function(app) {
 					});
 				});	
 			});
-		});
+		})
+
+        // can get players - for now, presence / absence only to support async validation in signup page
+        .get(function(req, res) {
+            if (req.query.hasOwnProperty('exists')) {
+                if (req.query.uniqueName) {
+                    Player.findOne({username: req.query.uniqueName}, function(err, player) {
+                        if (player) {
+                            return res.status(200).send();
+                        }
+                        return res.status(404).send();
+                    });
+                }
+
+                else if (req.query.username) {
+                    Player.findOne({idp: 'this', idpUsername: req.query.username}, function(err, player) {
+                        if (player) {
+                            return res.status(200).send();
+                        } 
+                        return res.status(404).end();
+                    });
+                }
+                else {
+                    return res.status(400).end();
+                }
+            }
+            else {
+                return res.status(403).send();
+            }
+        });
 };
