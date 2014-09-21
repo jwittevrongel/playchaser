@@ -139,8 +139,9 @@ module.exports.configureRoutes = function(app) {
                             if (err || !user) {
                                 return res.status(500).send({ src: 'server', err: 'unspecified', message: 'There was an error creating your account. Try again later.'});
                             }
-                            req.login();
-                            return res.status(200).send({ href: 'index.html#/player?new' });
+                            req.login(user, function() {
+                                return res.status(200).send({ href: 'index.html#/player?new' });    
+                            });
                         })(req, res, next);
 					});
 				});	
