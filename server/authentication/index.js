@@ -176,4 +176,8 @@ module.exports.configureRoutes = function(app) {
                 return res.status(403).send();
             }
         });
+    app.route('/players/me')
+        .get(function(req, res) {
+            return res.status(200).send(req.user);
+        });
 };

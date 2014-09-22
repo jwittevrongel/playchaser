@@ -11,7 +11,9 @@ exports.configureRoutes = function(app) {
 			'"use strict";' + 
 			'angular.module("playchaser")' +
 			'.constant("pcEnvironment", {' +
-			'restRoot: "http' + urlSuffix + '", ' +
-			'wsRoot: "ws' + urlSuffix + '"});})(angular);');
+			'site: {' +
+			'restRoot: "http' + urlSuffix + '",' +
+			'wsRoot: "ws' + urlSuffix + '"' + 
+			'}});})(angular);');
 	});
 };
