@@ -24,10 +24,14 @@
 	> .masthead {		
 		.make-xs-column(10);
 		.make-sm-column(10);
-		.make-md-column(6);		
+		.make-md-column(6);
+		font-weight: bold;		
 		> a {
-			background: url('../img/icon57.png') no-repeat 0px 3px;
-			padding-left: 57px;
+			background: url('../img/icon57.png') no-repeat left top;
+			padding-left: 64px;
+			position: relative;
+			top: 6px;
+			padding-top: 10px;
 		}
 	}
 
@@ -35,7 +39,6 @@
 		float: right;
 		padding: 0 10px;
 		border-left: 2px @color-primary-2 solid;
-		border-radius: 2px;
 	}
 	
 	> .player-menu {
@@ -47,6 +50,7 @@
 		.player-username {
 			position: relative;
 			top: -16px;
+			font-family: @font-family-sans-serif;
 			.hidden-sm;
 		}
 		.hidden-xs;
