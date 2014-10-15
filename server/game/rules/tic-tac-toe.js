@@ -15,16 +15,16 @@ exports.create = function(req, res) {
 				"2": {"0": "", "1": "", "2": ""}
 			}}}
 		},
-		participants: [{name: '', player: req.user._id}, {name: ''}],
+		participants: [{name: '', player: req.user._id}],
 		moves: []
 	});
 	
 	newGame.save(function(err) {
 		if (err) {
-			res.send(400, 'Cannot Create new Tic Tac Toe Game: ' + err);
+			res.status(400).send('Cannot Create new Tic Tac Toe Game: ' + err);
 		} else {
 			res.location('games/tic-tac-toe/' + newGame.id);
-			res.json(201, newGame.presentTo(req.user));
+			res.status(201).json(newGame.presentTo(req.user));
 		}
 	});
 };

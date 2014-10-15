@@ -14,8 +14,8 @@ var GameStateSchema = {
 
 var GameStateContainerSchema = {
 	currentTurn: GameParticipantSchema,
-	isStarted: {type: Boolean, default: false},
-	isCompleted: {type: Boolean, default: false},
+	stanza: {type: String, enum: ['pre-game', 'game-on', 'game-over'], default: 'pre-game'},
+	needsPlayers: Boolean,
 	global: GameStateSchema,
 	perParticipant: [{participant: GameParticipantSchema, state: GameStateSchema}]
 };
@@ -39,6 +39,16 @@ function BaseGameSchema() {
 		participants: [GameParticipantSchema],
 		currentState: GameStateContainerSchema,
 		moves: [GameTurnSchema]
+	});
+	
+	this.pre('save', function(next) {
+		var game = this;
+		if (game.currentState.stanza === 'pre-game') {
+			game.currentState.needsPlayers = (game.participants.length < game.rules.participants.max);
+		} else {
+			game.currentState.needsPlayers = false;
+		}
+		next();
 	});
 	
 	this.methods.presentTo = function(user) {

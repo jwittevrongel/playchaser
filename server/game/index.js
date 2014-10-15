@@ -25,21 +25,27 @@ function presentGames(games, user) {
 }
 
 function getListOfGames(model, req, res) {
-	var where = { "participants.player": req.user._id };
-	var filter = "owner name rules participants currentState.currentTurn currentState.isCompleted";
+	var theQuery = model.find();
+
+	if (req.query.hasOwnProperty('needsPlayers')) {
+		theQuery = theQuery.where('currentState.needsPlayers').equals(true);
+	} else {
+		// unless looking for a game to join, limit to games the player is already in
+		theQuery = theQuery.where('participants.player').equals(req.user._id);
+	}
+
 	// query parameters can narrow this list further
 	if (req.query.hasOwnProperty('myTurn')) {
-		where["currentState.currentTurn.player"] = req.user._id;
+		theQuery = theQuery.where('currentState.currentTurn.player').equals(req.user._id);
 	}
-	if (req.query.hasOwnProperty('completed')) {
-		where["currentState.isCompleted"] = true;
+
+	if (req.query.hasOwnProperty('stanza')) {
+		theQuery = theQuery.where('currentState.stanza').equals(req.query.stanza);
 	} 
-	else if (req.query.hasOwnProperty('active')) {
-		where["currentState.isCompleted"] = false;
-	}
-	model.find(where, filter, function(err, games) {
-		res.json(presentGames(games, req.user));
-	});
+	theQuery.select('owner name rules participants currentState.currentTurn currentState.stanza')
+		.exec(function(err, games) {
+			res.json(presentGames(games, req.user));
+		});
 }
 
 exports.configureRoutes = function(app) {
@@ -48,10 +54,14 @@ exports.configureRoutes = function(app) {
 			if (err) {
 		  		next(err);
 			} else if (game) {
+				// ruleset match?
+				if (game.rules != req.params.ruleset) {
+					return res.status(404).send("Game " + req.params.game_id + " was not found.");
+				}
 		  		req.game = game;
 		  		next();
 			} else {
-		  		res.send(404, "Game " + game_id + " was not found.");
+		  		res.status(404).send("Game " + game_id + " was not found.");
 			}
 	  	});
 	});
@@ -61,12 +71,6 @@ exports.configureRoutes = function(app) {
 	});
 		
 	app.route('/games/:ruleset/:game_id').get(function(req, res) {
-	
-		// does the game's ruleset match?
-		if (req.game.rules != req.params.ruleset) {
-			return res.send(404, "Game " + req.params.game_id + " was not found.");
-		}
-		
 		// are they a participant?
 		var isParticipant = false;
 		req.game.participants.forEach(function(participant) {
@@ -79,7 +83,7 @@ exports.configureRoutes = function(app) {
 			res.json(req.game.presentTo(req.user));
 		}
 		else {
-			res.send(403, "You are not a participant in this game");
+			res.status(403).send("You are not a participant in this game");
 		} 
 	});
 	
@@ -90,4 +94,22 @@ exports.configureRoutes = function(app) {
 		.post(function(req, res) {
 			ruleSets[req.params.ruleset].create(req, res);
 		});
+
+	app.route('/games/:ruleset/:game_id/participants').post(function (req, res) {
+		if (req.game.currentState.needsPlayers) {
+			if (!req.game.participants.some(function(participant) {
+				return (participant.player == req.user._id);
+			})) {
+				req.game.participants.push({name: '', player: req.user._id});
+				req.game.save(function(err){
+					if (err) {
+						return res.status(500).send('Error joining game: ' + req.game._id);
+					}
+					res.json(req.game.presentTo(req.user));
+				});
+				return;
+			}
+		} 
+		return res.status(400).send('Cannot join game: ' + req.game._id);
+	});
 };

@@ -7,7 +7,11 @@ var RuleSetSchema = new Schema({
 	_id: {type: String},
 	name: {type: String, required: true},
 	description: { type: String, required: true},
-	variants: [RuleSetSchema] 
+	variants: [RuleSetSchema],
+	participants: {
+		min: { type: Number},
+		max: { type: Number}
+	}
 });
 
 module.exports = mongoose.model("RuleSet", RuleSetSchema);
