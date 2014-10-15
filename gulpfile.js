@@ -74,7 +74,7 @@ gulp.task('client-copy', function() {
 
 gulp.task('client-main-js', function() {
 	return eventstream.merge.apply(eventstream, ['index', 'login'].map(function(mainfile) {
-		return gulp.src('client/js/' + mainfile + '.js', {base: 'client'})
+		return gulp.src(['client/js/' + mainfile + '.js', 'client/js/disable-debug.js'], {base: 'client'})
 			.pipe(ngAnnotate({add: true}))
 			.pipe(uglify('js/' + mainfile + '.min.js'))
 			.pipe(rev())
@@ -86,7 +86,7 @@ gulp.task('client-main-js', function() {
 });
 
 gulp.task('client-playchaser-js', function() {
-	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment_test.js'], {base: 'client'})
+	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment_test.js', '!client/js/disable-debug.js'], {base: 'client'})
 		.pipe(ngAnnotate({add: true}))
 		.pipe(uglify('js/playchaser.min.js'))
 		.pipe(rev())
