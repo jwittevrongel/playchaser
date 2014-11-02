@@ -4,6 +4,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     util = require('util');
 
+require('./RuleSet');
+
 var GameParticipantSchema = {
 	name: String,
 	player: {type: Schema.Types.ObjectId, ref : 'Player'}
@@ -44,16 +46,23 @@ function BaseGameSchema() {
 	this.pre('save', function(next) {
 		var game = this;
 		if (game.currentState.stanza === 'pre-game') {
-			game.currentState.needsPlayers = (game.participants.length < game.rules.participants.max);
+			game.populate('rules', function(err) {
+				if (err) {
+					return next(err);
+				}
+				game.currentState.needsPlayers = (game.participants.length < game.rules.participants.max);
+				next();
+			});			
 		} else {
 			game.currentState.needsPlayers = false;
+			next();
 		}
-		next();
 	});
 	
 	this.methods.presentTo = function(user) {
 		return this.toObject({
 			getters: true,
+			depopulate: true,
 			transform: function(doc, ret) {
 				if ('function' == typeof doc.ownerDocument) {
  					 return ret;
