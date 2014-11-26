@@ -9,7 +9,8 @@ var gulp = require('gulp'),
     htmlmin = require('gulp-htmlmin'),
     glob = require('glob'),
     eventstream = require('event-stream'),
-    uglify = require('gulp-uglifyjs'),
+    concat = require('gulp-concat'),
+    uglify = require('gulp-uglify'),
     ngAnnotate = require('gulp-ng-annotate'),
     rev = require('gulp-rev'),
     revCollector = require('gulp-rev-collector'),
@@ -74,8 +75,9 @@ gulp.task('client-copy', function() {
 
 gulp.task('client-main-js', function() {
 	return eventstream.merge.apply(eventstream, ['index', 'login'].map(function(mainfile) {
-		return gulp.src(['client/js/' + mainfile + '.js', 'client/js/disable-debug.js'], {base: 'client'})
+		return gulp.src(['client/js/' + mainfile + '.js', 'client/js/production-mode.js'], {base: 'client'})
 			.pipe(ngAnnotate({add: true}))
+			.pipe(concat('js/' + mainfile + '.min.js'))
 			.pipe(uglify('js/' + mainfile + '.min.js'))
 			.pipe(rev())
 			.pipe(gulp.dest('static'))
@@ -86,8 +88,9 @@ gulp.task('client-main-js', function() {
 });
 
 gulp.task('client-playchaser-js', function() {
-	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment_test.js', '!client/js/disable-debug.js'], {base: 'client'})
+	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment-test.js', '!client/js/production-mode.js'], {base: 'client'})
 		.pipe(ngAnnotate({add: true}))
+		.pipe(concat('js/playchaser.min.js'))
 		.pipe(uglify('js/playchaser.min.js'))
 		.pipe(rev())
 		.pipe(gulp.dest('static'))
