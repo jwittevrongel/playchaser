@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     processhtml = require('gulp-processhtml'),
     htmlmin = require('gulp-htmlmin'),
+    ngTemplates = require('gulp-ng-templates'),
     glob = require('glob'),
     eventstream = require('event-stream'),
     concat = require('gulp-concat'),
@@ -14,6 +15,8 @@ var gulp = require('gulp'),
     ngAnnotate = require('gulp-ng-annotate'),
     rev = require('gulp-rev'),
     revCollector = require('gulp-rev-collector'),
+    header = require('gulp-header'),
+    footer = require('gulp-footer'),
     path = require('path');    
 
 gulp.task('all-jshint', function() {
@@ -87,7 +90,27 @@ gulp.task('client-main-js', function() {
 	);
 });
 
-gulp.task('client-playchaser-js', function() {
+gulp.task('client-template-js', function() {
+	return gulp.src(['client/js/**/*.html'])
+		.pipe(htmlmin({
+	 					removeComments: true,
+	 					collapseWhitespace: true,
+	 					collapseBooleanAttributes: true,
+	 					removeAttributeQuotes: true,
+	 					removeRedundantAttributes: true,
+	 					removeEmptyAttributes: true
+	 				}))
+		.pipe(ngTemplates({ module: 'playchaser', filename: '_templates.js', path: function (path, base) {
+                return path.replace(base, 'js/');
+            } 
+        }))
+		
+		.pipe(header('(function(angular){\n"use strict";\n'))
+		.pipe(footer('\n})(angular);'))
+		.pipe(gulp.dest('client/js'));
+});
+
+gulp.task('client-playchaser-js', ['client-template-js'], function() {
 	return gulp.src(['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment-test.js', '!client/js/production-mode.js'], {base: 'client'})
 		.pipe(ngAnnotate({add: true}))
 		.pipe(concat('js/playchaser.min.js'))
