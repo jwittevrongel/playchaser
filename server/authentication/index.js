@@ -12,9 +12,9 @@ var anonymousUrlPrefixes = [
     '/font/',
     '/img',
     '/robots.txt',
-    '/js/login.min', 
+    '/js/login', 
     '/login',
-    '/js/environment.js',
+    '/js/environment',
     '/favicon.ico'
 ];
 
@@ -82,13 +82,13 @@ module.exports = function(req, res, next) {
             res.status(401).end();
         } else {
             var extension = path.extname(req.url);
-            if (extension !== '' && extension !== '.html') {
+            if (extension !== '.html') {
                 res.status(401).end();
             } else {
             	if (req.url == '/index.html' || req.url == '/') {
-                	res.redirect('login.html');
+                	res.redirect('/login.html');
                 } else {
-                	res.redirect('login.html#/login?timeout');
+                	res.redirect('/login.html#/login?timeout');
                 }	
             }
         }

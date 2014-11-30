@@ -16,7 +16,7 @@
     "errorhandler": "^1.1.1",
     "express": "^4.10.4",
     "express-session": "^1.6.5",
-    "mongoose": "^3.9.5",
+    "mongoose": "^3.8.19",
     "morgan": "^1.2.0",
     "nconf": "^0.6.7",
     "passport": "^0.1.18",

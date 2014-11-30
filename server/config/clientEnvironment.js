@@ -9,7 +9,7 @@ exports.configureRoutes = function(app) {
 		res.end(
 			'(function(angular){' +
 			'"use strict";' + 
-			'angular.module("playchaser")' +
+			'angular.module("playchaser.environment", [])' +
 			'.constant("pcEnvironment", {' +
 			'site: {' +
 			'restRoot: "http' + urlSuffix + '",' +

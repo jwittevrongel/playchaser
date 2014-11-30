@@ -1,10 +1,10 @@
 (function(angular){
 	"use strict";
-	angular.module('playchaser')
+	angular.module('playchaser.environment', [])
 		.constant('pcEnvironment', {
 			site: {
-				restRoot: "https://localhost:3000/",
-				wsRoot: "wss://localhost:3000/"
+				restRoot: "http://localhost:3000/",
+				wsRoot: "ws://localhost:3000/"
 			}
 		});
 })(angular);

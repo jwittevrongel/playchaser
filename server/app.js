@@ -53,7 +53,11 @@ mongoose.connect(config.db.connectionString, function(e){
 	app.use(passportInit);
 	app.use(passportSession);
 	app.use(authentication);
-	app.use(express.static(path.join(__dirname, '..', 'static')));
+	if ('development' == app.get('env')) {
+		app.use(express.static(path.join(__dirname, '..', 'client')));
+	} else {
+		app.use(express.static(path.join(__dirname, '..', 'static')));
+	}
 	
 	// add error handler in development only
 	if ('development' == app.get('env')) {

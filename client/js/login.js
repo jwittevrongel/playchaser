@@ -1,6 +1,6 @@
 (function(angular) {
 	"use strict";
-	angular.module('playchaser.login', [])
+	angular.module('playchaser.login', ['playchaser.environment'])
 		.directive('pcValidateEqual', function() {
 			return {
 				restrict: 'A',
@@ -22,7 +22,7 @@
 			};
 		})
 
-		.directive('pcUserAvailable', function($http, $q) {
+		.directive('pcUserAvailable', function($http, $q, pcEnvironment) {
 			return {
 				restrict: 'A',
 				require: 'ngModel',
@@ -35,7 +35,7 @@
 							}
 						};
 						config.params[$attrs.pcUserAvailable] = val;
-						$http.get('players', config).success(function() { 
+						$http.get(pcEnvironment.site.restRoot + 'players', config).success(function() { 
 								deferred.reject(false); 
 							})
 							.error(function() { 
@@ -48,14 +48,14 @@
 			};
 		})
 
-		.controller('pcLoginCtrl', function($scope, $http, $window, $location) {
+		.controller('pcLoginCtrl', function($scope, $http, $window, $location, pcEnvironment) {
 			$scope.errorMessages = {};
 			if ($location.hash === '/login?timeout') {
 				$scope.errorMessages.login = "Your playchaser session timed out. Please log in again.";
 			}
 			$scope.doLogin = function(login) {
 				$scope.errorMessages.login = "";
-				$http.post('login', login).success(function(data) {
+				$http.post(pcEnvironment.site.restRoot + 'login', login).success(function(data) {
 					$window.location.href = data.href;
 				}).error(function() {
 					$scope.errorMessages.login = "Invalid username or password. Please try again.";
@@ -64,7 +64,7 @@
 
 			$scope.doSignup = function (signup) {
 				$scope.errorMessages.signup = "";
-				$http.post('players', signup).success(function(data) {
+				$http.post(pcEnvironment.site.restRoot + 'players', signup).success(function(data) {
 					$window.location.href = data.href;
 				}).error(function(data) {
 					if (data.message) {
