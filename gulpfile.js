@@ -17,6 +17,7 @@ var gulp = require('gulp'),
     revCollector = require('gulp-rev-collector'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
+    replace = require('gulp-replace'),
     path = require('path');    
 
 gulp.task('all-jshint', function() {
@@ -46,6 +47,7 @@ gulp.task('client-html', ['rev-all'], function() {
 	 var files = glob.sync('client/*.html'),
      	streams = files.map(function(file) {
          	return gulp.src(file)
+         		 .pipe(replace(' ng-app=', ' ng-strict-di ng-app='))
                  .pipe(processhtml(file));
      	}).concat(gulp.src('bld/*.manifest.json'));
 
