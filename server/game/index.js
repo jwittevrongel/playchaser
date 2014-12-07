@@ -28,7 +28,8 @@ function getListOfGames(model, req, res) {
 	var theQuery = model.find();
 
 	if (req.query.hasOwnProperty('needsPlayers')) {
-		theQuery = theQuery.where('currentState.needsPlayers').equals(true);
+		theQuery = theQuery.where('currentState.needsPlayers').equals(true)
+						   .where('participants.player').ne(req.user._id);
 	} else {
 		// unless looking for a game to join, limit to games the player is already in
 		theQuery = theQuery.where('participants.player').equals(req.user._id);
@@ -43,6 +44,8 @@ function getListOfGames(model, req, res) {
 		theQuery = theQuery.where('currentState.stanza').equals(req.query.stanza);
 	} 
 	theQuery.select('owner name rules participants currentState.currentTurn currentState.stanza')
+		.populate('rules')
+		.populate('participants.player', 'username')
 		.exec(function(err, games) {
 			res.json(presentGames(games, req.user));
 		});

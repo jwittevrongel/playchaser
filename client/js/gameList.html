@@ -1,4 +1,10 @@
 
-<ul>
-<li ng-repeat='game in gameList'>Game {{ game._id }} </li>
+<ul class="pc-gamelist">
+	<li ng-repeat='game in ::gameList'>
+		<div class="game-title">{{ ::game.rules.name }}</div>
+		<div class="game-playercount" ng-pluralize count="::game.participants.length" when="{'one': '1 player', 'other': '{} players'}"></div>
+		<ul class="game-playerlist">
+			<li ng-repeat='participant in ::game.participants'>{{ ::participant.player.username }}</li> <!-- also consider participant.name for when a game is started -->
+		</ul>
+	</li>
 </ul>

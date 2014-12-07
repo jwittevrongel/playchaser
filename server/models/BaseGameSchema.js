@@ -62,9 +62,8 @@ function BaseGameSchema() {
 	this.methods.presentTo = function(user) {
 		return this.toObject({
 			getters: true,
-			depopulate: true,
 			transform: function(doc, ret) {
-				if ('function' == typeof doc.ownerDocument) {
+				if ('function' == typeof doc.ownerDocument || !ret.currentState) {
  					 return ret;
 				}
 				if(ret.currentState.global && ret.currentState.global.private) {
