@@ -5,5 +5,13 @@
 	"latedef": true,
 	"immed": true,
 	"nonbsp": true,
-	"nonew": true
+	"nonew": true,
+	"globals": {    
+    	"describe"  : false,
+    	"it"        : false,
+    	"before"    : false,
+    	"beforeEach": false,
+    	"after"     : false,
+    	"afterEach" : false
+    }
 }

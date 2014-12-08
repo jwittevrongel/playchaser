@@ -18,7 +18,8 @@ var gulp = require('gulp'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
     replace = require('gulp-replace'),
-    path = require('path');    
+    path = require('path'),
+    mocha = require('gulp-mocha');    
 
 gulp.task('all-jshint', function() {
 	return gulp.src(['gulpfile.js', 'server/**/*.js', 'client/**/*.js', '!client/lib/**/*'])
@@ -123,7 +124,16 @@ gulp.task('client-playchaser-js', ['client-template-js'], function() {
 		.pipe(gulp.dest('bld'));
 });
 
+gulp.task('server-test', function() {
+	return gulp.src(['server/**/*-test.js'], { read: false })
+		.pipe(mocha());
+});
+
+// no client tests yet
+gulp.task('client-test');
+
+gulp.task('all-test', ['server-test', 'client-test']);
 gulp.task('rev-all', ['client-less', 'client-js', 'client-copy']);
 gulp.task('client-js', ['client-main-js', 'client-playchaser-js']);
 gulp.task('client-all', ['client-less', 'client-html', 'client-js', 'client-copy', 'client-copy-lib']);
-gulp.task('default', ['all-jshint', 'client-all']);
+gulp.task('default', ['all-jshint', 'all-test', 'client-all']);
