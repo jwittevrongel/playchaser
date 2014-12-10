@@ -11,6 +11,10 @@
         "secrets": {
             "cookie": "I am the Walrus",
             "express": "Lucy in the Sky with Diamonds"
-        }    
+        },
+        "redisStoreOptions": {
+            "host": "localhost",
+            "port": 6379
+        }
     }
 }

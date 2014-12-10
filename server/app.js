@@ -15,10 +15,17 @@ var express = require('express'),
 	compression = require('compression'),
 	errorHandler = require('errorhandler'),
 	WebSocketServer = require('./websockets'),
-	MongoStore = require('connect-mongo')(session),
+	RedisStore = require('connect-redis')(session),
 	gameEngine = require('./game'),
 	middleware = require('./middleware');
-	
+
+// setup db connection early on
+mongoose.connect(config.db.connectionString, function(err) {
+	if (err) {
+		throw err;
+	}
+});
+
 var app = express();
 app.set('port', config.port || 3000);
 app.use(compression());
@@ -29,66 +36,60 @@ app.use(cookieParserInstance);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-mongoose.connect(config.db.connectionString, function(e){
-	if(e) {
-		// error connecting
-		throw e;
-  	}
-	var sessionStore = new MongoStore({ mongoose_connection: mongoose.connection });
-	var expressSession = session({ 
-		secret: config.session.secrets.express, 
-		cookie: {
-			path: '/',
-			httpOnly: true,
-			maxAge: config.session.timeout
-		},
-		store: sessionStore,
-		resave: true,
-		saveUninitialized: true
-	});
-	
-	app.use(expressSession);
-	var passportInit = passport.initialize();
-	var passportSession = passport.session();
-	app.use(passportInit);
-	app.use(passportSession);
-	app.use(authentication);
-	if ('development' == app.get('env')) {
-		app.use(express.static(path.join(__dirname, '..', 'client')));
-	} else {
-		app.use(express.static(path.join(__dirname, '..', 'static')));
-	}
-	
-	// add error handler in development only
-	if ('development' == app.get('env')) {
-		app.use(errorHandler());
-	}
+var sessionStore = new RedisStore(config.session.redisStoreOptions);
+var expressSession = session({ 
+	secret: config.session.secrets.express, 
+	cookie: {
+		path: '/',
+		httpOnly: true,
+		maxAge: config.session.timeout
+	},
+	store: sessionStore,
+	resave: true,
+	saveUninitialized: true
+});
 
-	var server;
-	if (config.secure) {
-		server = spdy.createServer(config.secure, app);
-	}
-	else {
-		server = http.Server(app);
-	}
-	var wsServer = new WebSocketServer({
-		server: server,
-		authenticationMiddleware: [
-			cookieParserInstance,
-			expressSession,
-			passportInit,
-			passportSession
-		]
-	});
+app.use(expressSession);
+var passportInit = passport.initialize();
+var passportSession = passport.session();
+app.use(passportInit);
+app.use(passportSession);
+app.use(authentication);
 
-	// routes
-	authentication.configureRoutes(app);
-	config.clientEnvironment.configureRoutes(app);
-	gameEngine.configureRoutes(app);
-	wsServer.route('foo');
-	
-	server.listen(app.get('port'), function(){
-	  console.log('Playchaser running on port ' + app.get('port'));
-	});
+if ('development' == app.get('env')) {
+	app.use(express.static(path.join(__dirname, '..', 'client')));
+} else {
+	app.use(express.static(path.join(__dirname, '..', 'static')));
+}
 
+// add error handler in development only
+if ('development' == app.get('env')) {
+	app.use(errorHandler());
+}
+
+var server;
+if (config.secure) {
+	server = spdy.createServer(config.secure, app);
+}
+else {
+	server = http.Server(app);
+}
+var wsServer = new WebSocketServer({
+	server: server,
+	authenticationMiddleware: [
+		cookieParserInstance,
+		expressSession,
+		passportInit,
+		passportSession
+	]
+});
+
+// routes
+authentication.configureRoutes(app);
+config.clientEnvironment.configureRoutes(app);
+gameEngine.configureRoutes(app);
+wsServer.route('foo');
+
+server.listen(app.get('port'), function(){
+  console.log('Playchaser running on port ' + app.get('port'));
 });
