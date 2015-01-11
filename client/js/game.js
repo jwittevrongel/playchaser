@@ -1,20 +1,30 @@
 (function(angular) {
 	"use strict";
 	angular.module('playchaser')
-		.service('pcGame', function($resource, pcEnvironment) {
+		.service('pcGame', function($resource, $http, $filter, pcEnvironment, pcCurrentPlayer) {
 			var GameResource = $resource(
-				pcEnvironment.site.restRoot + "games/:name/:id",
-				{ name: "@name", id: "@id" }
-				// TODO: Custom actions?
+				pcEnvironment.site.restRoot + 'games/:ruleset/:id',
+				{ ruleset: '@rules.id', id: '@id' }				
 			);
 
-			GameResource.prototype.joinGame = function() {
-				// adds the current player to the game
+			GameResource.prototype.join = function() {
+				var self = this;
+				return $http.post(pcEnvironment.site.restRoot + 'games/' + this.rules.id + '/' + this.id + '/participants')
+					.success(function(data) {
+						angular.extend(self, data);
+					});
 			};
 
 			GameResource.prototype.makeMove = function(/*move*/) {
 				// make a move in the game
 			};
+
+			Object.defineProperty(GameResource.prototype, 'canBeJoined', {
+				get: function() { 
+					return (this.currentState.stanza === 'pre-game' && $filter('filter')(this.participants, { player: { _id: pcCurrentPlayer._id }}).length === 0);
+				},
+
+			});
 
 			return GameResource; 
 		})
@@ -22,7 +32,8 @@
 			return {
 				templateUrl: 'js/gameList.html',
 				scope: {
-					gameList: '=pcGameList'
+					gameList: '=pcGameList',
+					player: '=pcPlayer'
 				}
 			};
 		});
