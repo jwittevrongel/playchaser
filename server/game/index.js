@@ -24,6 +24,20 @@ function presentGames(games, user) {
 	return result;
 }
 
+function standardSelect(query, callback) {
+	query.select('owner name rules participants currentState')
+		.populate('rules')
+		.populate('participants.player', 'username')
+		.exec(callback);
+}
+
+function getSingleGame(model, id, req, res) {
+	var theQuery = model.findById(id);
+	standardSelect(theQuery, function(err, game){
+		res.json(game.presentTo(req.user));
+	});
+}
+
 function getListOfGames(model, req, res) {
 	var theQuery = model.find();
 
@@ -42,23 +56,21 @@ function getListOfGames(model, req, res) {
 
 	if (req.query.hasOwnProperty('stanza')) {
 		theQuery = theQuery.where('currentState.stanza').equals(req.query.stanza);
-	} 
-	theQuery.select('owner name rules participants currentState.currentTurn currentState.stanza')
-		.populate('rules')
-		.populate('participants.player', 'username')
-		.exec(function(err, games) {
-			res.json(presentGames(games, req.user));
-		});
+	}
+	standardSelect(theQuery, function(err, games) {
+		res.json(presentGames(games, req.user));
+	});
 }
 
 exports.configureRoutes = function(app) {
 	app.param('game_id', function(req, res, next, game_id){
-		Game.findById(game_id, function(err, game){
+		var theQuery = Game.findById(game_id);
+		standardSelect(theQuery, function(err, game) {
 			if (err) {
 		  		next(err);
 			} else if (game) {
 				// ruleset match?
-				if (game.rules != req.params.ruleset) {
+				if (game.rules.id != req.params.ruleset) {
 					return res.status(404).send("Game " + req.params.game_id + " was not found.");
 				}
 		  		req.game = game;
@@ -108,7 +120,7 @@ exports.configureRoutes = function(app) {
 					if (err) {
 						return res.status(500).send('Error joining game: ' + req.game._id);
 					}
-					res.json(req.game.presentTo(req.user));
+					getSingleGame(req.game.model(req.game.constructor.modelName), req.game._id, req, res);
 				});
 				return;
 			}
