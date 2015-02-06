@@ -28,17 +28,16 @@
                     <span class="mobile-menu-entry"></span>
                 </a></div>
             </div>
-            <div class="body">
-              My Games:
-              <div pc-game-list="games.mine"></div>
-              Games that need players:
-              <div pc-game-list="games.open"></div>
+            <div class="body" ng-view>
             </div>
         </div>
         <script src="lib/angular-1.3.11/angular.min.js"></script>
         <script src="lib/angular-1.3.11/angular-resource.min.js"></script>
+        <script src="lib/angular-1.3.11/angular-route.min.js"></script>
         <!-- build:js js/index.min.js -->
         <script src="js/index.js"></script>
+        <script src="js/routes.js"></script>
+        <script src="js/home.js"></script>
         <!-- /build -->
         
         <!-- build:js js/playchaser.min.js -->
