@@ -63,6 +63,15 @@ function BaseGameSchema() {
 		return this.toObject({
 			getters: true,
 			transform: function(doc, ret) {
+				if (ret._id) {
+					if (ret._id.toHexString) {
+						ret.id = ret._id.toHexString();
+					}
+					else {
+						ret.id = ret._id;
+					}
+					delete ret._id;
+				}
 				if ('function' == typeof doc.ownerDocument || !ret.currentState) {
  					 return ret;
 				}
@@ -76,6 +85,7 @@ function BaseGameSchema() {
 						}
 					});
 				}
+				return ret;
 			}	
 		});
 	};

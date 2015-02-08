@@ -17,7 +17,7 @@ function presentGames(games, user) {
 	if (games && games.length) {
 		games.forEach(function(game) {
 			var presented = game.presentTo(user);
-			presented.url = '/games/' + game.rules + '/' + game.id;
+			presented.url = '/games/' + game.rules._id + '/' + game.id;
 			result.push(presented);
 		});
 	}
@@ -89,7 +89,7 @@ exports.configureRoutes = function(app) {
 		// are they a participant?
 		var isParticipant = false;
 		req.game.participants.forEach(function(participant) {
-			if (participant.player == req.user._id) {
+			if (participant.player.id == req.user.id) {
 				isParticipant = true;
 			}
 		});
@@ -113,7 +113,7 @@ exports.configureRoutes = function(app) {
 	app.route('/games/:ruleset/:game_id/participants').post(function (req, res) {
 		if (req.game.currentState.needsPlayers) {
 			if (!req.game.participants.some(function(participant) {
-				return (participant.player == req.user._id);
+				return (participant.player.id == req.user.id);
 			})) {
 				req.game.participants.push({name: '', player: req.user._id});
 				req.game.save(function(err){
@@ -125,6 +125,25 @@ exports.configureRoutes = function(app) {
 				return;
 			}
 		} 
-		return res.status(400).send('Cannot join game: ' + req.game._id);
+		return res.status(400).send('Cannot join game: ' + req.game.id);
+	});
+
+	app.route('/games/:ruleset/:game_id/currentState/stanza').put(function(req, res) {
+		// only possible thing that can be done right now is to transition from
+		// pre-game to game-on.
+
+		// preconditions that apply to all games:
+		// - game must be currently in pre-game and cannot need players
+		// - requestor must be game's owner
+		if (req.game.owner != req.user.id || req.game.currentState.needsPlayers) {
+			return res.status(400).send('Cannot start game: ' + req.game.id);
+		}
+
+		if (req.body != 'game-on') {
+			return res.status(400).send('Cannot transition game state to ' + req.body);
+		}
+
+		// looks OK, delegate to acutal game's "start" method
+		ruleSets[req.params.ruleset].startGame(req, res);
 	});
 };

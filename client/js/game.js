@@ -21,7 +21,7 @@
 
 			Object.defineProperty(GameResource.prototype, 'canBeJoined', {
 				get: function() { 
-					return (this.currentState.stanza === 'pre-game' && $filter('filter')(this.participants, { player: { _id: pcCurrentPlayer._id }}).length === 0);
+					return (this.currentState.stanza === 'pre-game' && $filter('filter')(this.participants, { player: { id: pcCurrentPlayer.id }}).length === 0);
 				},
 
 			});

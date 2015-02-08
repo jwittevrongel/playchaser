@@ -178,6 +178,13 @@ module.exports.configureRoutes = function(app) {
         });
     app.route('/players/me')
         .get(function(req, res) {
-            return res.status(200).send(req.user);
+            return res.status(200).send(req.user.toObject({
+                transform: function(doc, ret) {
+                    ret.id = ret._id.toHexString();
+                    delete ret._id;
+                    delete ret.passwd;
+                    return ret;
+                }
+            }));
         });
 };
