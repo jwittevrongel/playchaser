@@ -2,7 +2,9 @@
 
 var fs = require('fs'),
 	path = require('path'),
-	Game = require('../models/Game');
+	Game = require('../models/Game'),
+	shuffle = require('knuth-shuffle').knuthShuffle,
+	extend = require('extend');
 
 var ruleSets = {};
 fs.readdirSync(__dirname + '/rules/').forEach(function(file) {
@@ -115,7 +117,7 @@ exports.configureRoutes = function(app) {
 			if (!req.game.participants.some(function(participant) {
 				return (participant.player.id == req.user.id);
 			})) {
-				req.game.participants.push({name: '', player: req.user._id});
+				req.game.participants.push({player: req.user._id});
 				req.game.save(function(err){
 					if (err) {
 						return res.status(500).send('Error joining game: ' + req.game._id);
@@ -144,6 +146,18 @@ exports.configureRoutes = function(app) {
 		}
 
 		// looks OK, delegate to acutal game's "start" method
-		ruleSets[req.params.ruleset].startGame(req, res);
+		ruleSets[req.params.ruleset].start(req, res);
 	});
 };
+
+// game library functions
+function randomizeParticipants(game, participantSettings) {
+	// needs at least as many settings objects as participants in the game
+	var shuffled = shuffle(participantSettings.slice(0, game.participants.length - 1));
+
+	for (var i = 0; i < game.participants.length; ++i) {
+		extend(game.participants[i], shuffled[i]);
+	}
+}
+
+exports.randomizeParticipants = randomizeParticipants;

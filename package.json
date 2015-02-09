@@ -16,6 +16,8 @@
     "errorhandler": "^1.1.1",
     "express": "^4.10.4",
     "express-session": "^1.6.5",
+    "extend": "^2.0.0",
+    "knuth-shuffle": "^1.0.1",
     "mongoose": "^3.8.19",
     "morgan": "^1.2.0",
     "nconf": "^0.6.7",

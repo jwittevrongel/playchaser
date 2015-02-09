@@ -8,7 +8,9 @@ require('./RuleSet');
 
 var GameParticipantSchema = {
 	name: String,
-	player: {type: Schema.Types.ObjectId, ref : 'Player'}
+	player: {type: Schema.Types.ObjectId, ref : 'Player'},
+	turnOrder: Number,
+	tablePosition: Number
 };
 
 var GameStateSchema = {
