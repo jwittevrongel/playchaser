@@ -21,9 +21,14 @@
 
 			Object.defineProperty(GameResource.prototype, 'canBeJoined', {
 				get: function() { 
-					return (this.currentState.stanza === 'pre-game' && $filter('filter')(this.participants, { player: { id: pcCurrentPlayer.id }}).length === 0);
-				},
+					return (this.currentState.stanza === 'pre-game' && this.currentState.needsPlayers && $filter('filter')(this.participants, { player: { id: pcCurrentPlayer.id }}).length === 0);
+				}
+			});
 
+			Object.defineProperty(GameResource.prototype, 'canBeStarted', {
+				get: function() {
+					return (this.currentState.stanza === 'pre-game' && this.owner === pcCurrentPlayer.id && !this.currentState.needsPlayers);
+				}
 			});
 
 			return GameResource; 
@@ -32,8 +37,7 @@
 			return {
 				templateUrl: 'js/gameList.html',
 				scope: {
-					gameList: '=pcGameList',
-					player: '=pcPlayer'
+					gameList: '=pcGameList'
 				}
 			};
 		});
