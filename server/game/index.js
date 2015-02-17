@@ -153,7 +153,7 @@ exports.configureRoutes = function(app) {
 // game library functions
 function randomizeParticipants(game, participantSettings) {
 	// needs at least as many settings objects as participants in the game
-	var shuffled = shuffle(participantSettings.slice(0, game.participants.length - 1));
+	var shuffled = shuffle(participantSettings.slice(0, game.participants.length));
 
 	for (var i = 0; i < game.participants.length; ++i) {
 		extend(game.participants[i], shuffled[i]);
