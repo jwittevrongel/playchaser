@@ -9,7 +9,15 @@
 
 			GameResource.prototype.join = function() {
 				var self = this;
-				return $http.post(pcEnvironment.site.restRoot + 'games/' + this.rules.id + '/' + this.id + '/participants')
+				return $http.post(pcEnvironment.site.restRoot + self.url + '/participants')
+					.success(function(data) {
+						angular.extend(self, data);
+					});
+			};
+
+			GameResource.prototype.start = function() {
+				var self = this;
+				return $http.put(pcEnvironment.site.restRoot + self.url + '/currentState/stanza', 'game-on')
 					.success(function(data) {
 						angular.extend(self, data);
 					});

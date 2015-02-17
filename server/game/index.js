@@ -19,7 +19,7 @@ function presentGames(games, user) {
 	if (games && games.length) {
 		games.forEach(function(game) {
 			var presented = game.presentTo(user);
-			presented.url = '/games/' + game.rules._id + '/' + game.id;
+			presented.url = 'games/' + game.rules._id + '/' + game.id;
 			result.push(presented);
 		});
 	}
