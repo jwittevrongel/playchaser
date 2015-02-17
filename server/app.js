@@ -34,7 +34,7 @@ app.use(morgan('dev'));
 var cookieParserInstance = cookieParser(config.session.secrets.cookie);
 app.use(cookieParserInstance);
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({strict: false}));
 
 var sessionStore = new RedisStore(config.session.redisStoreOptions);
 var expressSession = session({ 

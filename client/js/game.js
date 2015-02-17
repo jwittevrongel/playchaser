@@ -17,7 +17,7 @@
 
 			GameResource.prototype.start = function() {
 				var self = this;
-				return $http.put(pcEnvironment.site.restRoot + self.url + '/currentState/stanza', 'game-on')
+				return $http.put(pcEnvironment.site.restRoot + self.url + '/currentState/stanza', angular.toJson("game-on"))
 					.success(function(data) {
 						angular.extend(self, data);
 					});

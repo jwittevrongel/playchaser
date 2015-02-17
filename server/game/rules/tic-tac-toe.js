@@ -34,7 +34,7 @@ exports.start = function(req, res) {
 	req.game.currentState.stanza = 'game-on';
 
 	// fornow: always assign paricipants randomly to X or O
-	game.randzomizeParticipants(req.game, [
+	game.randomizeParticipants(req.game, [
 		{
 			name: 'X',
 			turnOrder: 0,
