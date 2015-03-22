@@ -8,8 +8,8 @@ var fs = require('fs'),
 
 var ruleSets = {};
 fs.readdirSync(__dirname + '/rules/').forEach(function(file) {
-	if (path.extname(file) == '.js') {
-		var ruleSetName = path.basename(file, '.js');
+	if (fs.lstatSync(__dirname + '/rules/' + file).isDirectory()) {
+		var ruleSetName = path.basename(file);
 		ruleSets[ruleSetName] = require('./rules/' + ruleSetName);
 	}
 });

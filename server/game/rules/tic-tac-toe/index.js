@@ -1,7 +1,7 @@
 "use strict";
 
-var TicTacToe = require('../../models/TicTacToe'),
-	game      = require('..');
+var TicTacToe = require('../../../models/TicTacToe'),
+	game      = require('../..');
 
 exports.model = TicTacToe;
 
