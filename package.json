@@ -18,7 +18,7 @@
     "express-session": "^1.6.5",
     "extend": "^2.0.0",
     "knuth-shuffle": "^1.0.1",
-    "mongoose": "^3.8.19",
+    "mongoose": "^4.0.2",
     "morgan": "^1.2.0",
     "nconf": "^0.6.7",
     "passport": "^0.1.18",
