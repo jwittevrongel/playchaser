@@ -1,10 +1,9 @@
 "use strict";
 
-var RuleSet = require('../../models/RuleSet');
+exports.schema = 'gameLibrary';
 
-exports.up = function(mongoose, next) {
-	var ticTacToeRuleSet = new RuleSet({
-		_id: 'tic-tac-toe',
+exports.up = function(db) {
+	return db.collection('rulesets').updateOneAsync({_id: 'tic-tac-toe'}, {
 		name: 'Tic Tac Toe',
 		description: 'A 2-player game. Players take turns placing one of their markers in a 3x3 grid. A player wins by getting 3 markers in a line.',
 		variants:[],
@@ -12,15 +11,9 @@ exports.up = function(mongoose, next) {
 			min: 2,
 			max: 2
 		}
-	});
-	
-	ticTacToeRuleSet.save(function(err) {
-		next(err);
-	});
+	}, { upsert: true });
 };
 
-exports.down = function(mongoose, next) {
-	RuleSet.remove({_id: 'tic-tac-toe'}, function(err) {
-		next(err);
-	});
+exports.down = function(db) {
+	return db.collection('rulesets').deleteOneAsync({_id: 'tic-tac-toe'});
 };

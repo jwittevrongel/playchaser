@@ -1,10 +1,9 @@
 "use strict";
 
-var RuleSet = require('../../models/RuleSet');
+exports.schema = 'gameLibrary';
 
-exports.up = function(mongoose, next) {
-	var gnosticaRuleSet = new RuleSet({
-		_id: 'gnostica',
+exports.up = function(db) {
+	return db.collection('rulesets').updateOneAsync({ _id: 'gnostica' }, {
 		name: 'Gnostica',
 		description: 'A muti-player strategy game where players compete for influence over a magical landscape of tarot cards.',
 		variants:[],
@@ -12,15 +11,9 @@ exports.up = function(mongoose, next) {
 			min: 2,
 			max: 6
 		}
-	});
-	
-	gnosticaRuleSet.save(function(err) {
-		next(err);
-	});
+	}, { upsert: true });
 };
 
-exports.down = function(mongoose, next) {
-	RuleSet.remove({_id: 'gnostica'}, function(err) {
-		next(err);
-	});
+exports.down = function(db) {
+	return db.collection('rulesets').deleteOneAsync({_id: 'gnostica'});
 };

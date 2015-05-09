@@ -9,6 +9,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "bcrypt": "^0.8.1",
+    "bluebird": "^2.9.25",
     "body-parser": "^1.4.3",
     "compression": "^1.0.8",
     "connect-redis": "^2.1.0",
@@ -18,12 +19,12 @@
     "express-session": "^1.6.5",
     "extend": "^2.0.0",
     "knuth-shuffle": "^1.0.1",
-    "mongoose": "^4.0.2",
+    "mongodb": "^2.0.31",
     "morgan": "^1.2.0",
     "nconf": "^0.6.7",
     "passport": "^0.1.18",
     "passport-local": "^0.1.6",
-    "spdy": "^1.28.1",
+    "redis": "^0.12.1",
     "ws": "^0.4.32"
   },
   "devDependencies": {

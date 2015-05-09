@@ -1,32 +1,25 @@
 "use strict";
 
-var Player = require ('../../models/Player'),
-    config = require ('../../config');
+var config = require('../../config');
 
-exports.up = function(mongoose, next) {
+exports.schema = 'player';
+
+exports.up = function(db) {
     var adminPassword = config.initialSetup.adminPassword;
     if (!adminPassword) {
-        next('*** Error: initialSetup.adminPassword was not set in site.json');
-        return;
+        throw '*** Error: initialSetup.adminPassword was not set in site.json';
     }
     
-    var theFirstAdministrator = new Player({
-        idp: "this",
+    return db.collection('players').updateOneAsync({ 
+        idp: "this", 
+        idpUsername: "administrator@playchaser.com" 
+    }, {
+        idp: "this", 
         idpUsername: "administrator@playchaser.com",
-        username: "Administrator",
         passwd: adminPassword,
-        profile: {
-            realName: "PlayChaser Administrator"
-        }
-    });
-
-    theFirstAdministrator.save(function (err) {
-        next(err);
-    });
+    }, { upsert: true });
 };
 
-exports.down = function(mongoose, next) {
-    Player.remove({ idp: 'this', idpUsername: 'administrator@playchaser.com' }, function(err) {
-        next(err);
-    });
+exports.down = function(db) {
+    return db.collection('players').deleteOneAsync({ idp: 'this', idpUsername: 'administrator@playchaser.com' });
 };

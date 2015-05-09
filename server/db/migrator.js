@@ -2,10 +2,8 @@
 
 var fs = require('fs'),
     path = require('path'),
-    config = require('../config'),
-    mongoose = require('mongoose'),
-    Migration = require('./Migration'),
-    async = require('async');
+    Promise = require('bluebird'),
+    connection = require('./connection');
 
 var migrationDirectory = path.join(__dirname, 'migrations');
 
@@ -18,51 +16,42 @@ function makeNameFilename(migrationName) {
     return migrationName.replace(/\s+/g, '-');
 }
 
-function performMigrationUp(migrationName, callback) {
+function performMigrationUp(connections, migrationName) {
+    var executableMigration = require(path.join(migrationDirectory, migrationName));
+    
     // see if the migration has already been performed.  If so, skip it
-    Migration.findById(migrationName, function(err, results) {
-        if (results) {
-            // already applied
-            callback();
-            return;
-        }
-
-        console.log("Applying Migration: " + migrationName);
-        var executableMigration = require(path.join(migrationDirectory, migrationName));
-        executableMigration.up(mongoose, function(err) {
-            if (err) {
-                callback(err);
+    var db = connections[executableMigration.schema];
+    return db.collection('migrations').findOneAsync({_id: migrationName})
+        .then(function(migration) {
+            if (migration) {
+                // already applied
                 return;
-            } 
-            var migration = new Migration({ _id: migrationName, applied: new Date() });
-            migration.save(function(err) {
-                callback(err);
-            });
+            }
+            console.log("Applying Migration: " + migrationName);
+            return executableMigration.up(db);
+        })
+        .then(function() {
+            return db.collection('migrations').insertOneAsync({_id: migrationName, applied: new Date() });
         });
-    });
 }
 
-function performMigrationDown(migrationName, callback) {
-    // see if the migration was previously performed.  If not, skip it
-    Migration.findById(migrationName, function(err, results) {
-        if (!results) {
-            // already applied
-            callback();
-            return;
-        }
-
-        console.log("Reverting Migration: " + migrationName);
-        var executableMigration = require(path.join(migrationDirectory, migrationName));
-        executableMigration.down(mongoose, function(err) {
-            if (err) {
-                callback(err);
+function performMigrationDown(connections, migrationName) {
+    var executableMigration = require(path.join(migrationDirectory, migrationName));
+    
+    // see if the migration has already been performed.  If so, skip it
+    var db = connections[executableMigration.schema];
+    return db.collection('migrations').findOneAsync({_id: migrationName})
+        .then(function(migration) {
+            if (!migration) {
+                // was never applied
                 return;
-            } 
-            Migration.remove({ _id: migrationName }, function(err) {
-                callback(err);
-            });
+            }
+            console.log("Reverting Migration: " + migrationName);
+            return executableMigration.down(db);
+        })
+        .then(function() {
+            return db.collection('migrations').deleteOneAsync({_id: migrationName });
         });
-    });
 }
 
 function listAvailableMigrations() {
@@ -108,16 +97,17 @@ function performMigrations(migrationName, migrationList, migrationFunction) {
         // slice the array so that the target migration is the last in the list
         migrationList = migrationList.slice(0, migrationList.indexOf(migrationName) + 1);
     }
-
-    mongoose.connect(config.db.connectionString, config.db.options);
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'Migration Failed.  MongoDB connection error:'));
-    db.once('open', function() {
-        async.eachSeries(migrationList, migrationFunction, function() {
-            db.close();
+    
+    Promise.using(connection.connectToPlayerDatabase(), connection.connectToGameHistoryDatabase(), connection.connectToGameLibraryDatabase(), function(playerDb, historyDb, libraryDb) {
+        var connections = {
+            "player": playerDb,
+            "gameHistory": historyDb,
+            "gameLibrary": libraryDb
+        };
+        return Promise.each(migrationList, function(migration) {
+           return migrationFunction(connections, migration); 
         });
     });
-
 }
 
 exports.up = function(migrationName) {
@@ -132,12 +122,14 @@ exports.create = function(migrationName) {
     var migrationTemplate = [
         '"use strict";',
         '',
-        'exports.up = function(mongoose, next) {',
-        '    next();',
+        "exports.schema = ''; // 'player', 'gameLibrary', or 'gameHistory'",
+        '',
+        'exports.up = function(db) {',
+        "    //return db.collection('foo').updateOneAsync({});",
         '};',
         '',
-        'exports.down = function(mongoose, next) {',
-        '    next();',
+        'exports.down = function(db) {',
+        "    //return db.collection('foo').deleteOneAsync({});",
         '};',
         ''
     ].join('\n');

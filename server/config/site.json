@@ -1,7 +1,27 @@
 {
     "db": {
-        "connectionString": "mongodb://localhost/playchaser",
-        "options": {
+        "mongo": {
+            "player": { 
+                "connectionString": "mongodb://localhost/playchaser",
+                "options": {
+                }
+            },
+            "gameLibrary": { 
+                "connectionString": "mongodb://localhost/playchaser",
+                "options": {
+                }
+            },
+            "gameHistory": { 
+                "connectionString": "mongodb://localhost/playchaser",
+                "options": {
+                }
+            }
+        },
+        "redis": {
+            "session": {
+                "host": "localhost",
+                "port": 6379
+            }
         }
     },
     "initialSetup": {
@@ -11,10 +31,6 @@
         "secrets": {
             "cookie": "I am the Walrus",
             "express": "Lucy in the Sky with Diamonds"
-        },
-        "redisStoreOptions": {
-            "host": "localhost",
-            "port": 6379
         }
     }
 }

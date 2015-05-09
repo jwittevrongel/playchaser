@@ -47,11 +47,11 @@ if (args.length > 1) {
     migrationName = args[1];
 }
     
-var migrationManager = require('../db/MigrationManager');
+var migrator = require('../db/migrator');
     
 switch (command) {
     case 'up':
-        migrationManager.up(migrationName);
+        migrator.up(migrationName);
         break;
     case 'down':
         if (!migrationName) {
@@ -59,7 +59,7 @@ switch (command) {
             printUsage();
             return;
         }
-        migrationManager.down(migrationName);
+        migrator.down(migrationName);
         break;
     case 'create':
         if (!migrationName) {
@@ -67,7 +67,7 @@ switch (command) {
             printUsage();
             return;
         }
-        migrationManager.create(migrationName);
+        migrator.create(migrationName);
         break;
     default:
         console.log('\n***Error: Invalid command "' + command + '"' + '\n');
