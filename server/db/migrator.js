@@ -25,13 +25,13 @@ function performMigrationUp(connections, migrationName) {
         .then(function(migration) {
             if (migration) {
                 // already applied
-                return;
+                return Promise.resolve();
             }
             console.log("Applying Migration: " + migrationName);
-            return executableMigration.up(db);
-        })
-        .then(function() {
-            return db.collection('migrations').insertOneAsync({_id: migrationName, applied: new Date() });
+            return executableMigration.up(db)
+                .then(function() {
+                    return db.collection('migrations').insertOneAsync({_id: migrationName, applied: new Date() }); 
+                });
         });
 }
 
@@ -44,13 +44,13 @@ function performMigrationDown(connections, migrationName) {
         .then(function(migration) {
             if (!migration) {
                 // was never applied
-                return;
+                return Promise.resolve();
             }
             console.log("Reverting Migration: " + migrationName);
-            return executableMigration.down(db);
-        })
-        .then(function() {
-            return db.collection('migrations').deleteOneAsync({_id: migrationName });
+            return executableMigration.down(db)
+                .then(function() {
+                    return db.collection('migrations').deleteOneAsync({_id: migrationName });
+                });
         });
 }
 
