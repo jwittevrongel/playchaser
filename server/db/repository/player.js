@@ -1,30 +1,8 @@
 "use strict";
 
-exports.schemaName = 'player';
-exports.collectionName = 'players';
-
-function PlayerRepository(db) {
-	this.db = db;
-	this.collection = db.collection(exports.collectionName);
-}
-
-PlayerRepository.prototype.save = function(player) {
-	return this.collection.updateOneAsync({
-		"identity.idp": player.identity.idp, 
-		"identity.idpUsername": player.identity.idpUsername
-	}, player, { upsert: true });
-};
-
-PlayerRepository.prototype.removeByIdentity = function(identity) {
-	return this.collection.deleteOneAsync({
-		"identity.idp": identity.idp,
-		"identity.idpUsername": identity.idpUsername
-	});
-};
-
-PlayerRepository.prototype.initializeIndices = function() {
-	var self = this;
-	return self.collection.createIndexesAsync([{
+var SCHEMA = 'player',
+    COLLECTION = 'players',
+	INDEXES = [{
 		key: {
 			"identity.idp": 1,
 			"identity.idpUsername": 1
@@ -38,14 +16,25 @@ PlayerRepository.prototype.initializeIndices = function() {
 		name: "player_ux02_moniker",
 		unique: true
 		
-	}]);
+	}];
+
+var repository = require('./');
+
+var PlayerRepository = repository.generate(SCHEMA, COLLECTION, INDEXES);
+	
+PlayerRepository.prototype.save = function(player) {
+	return this._collection.updateOneAsync({
+		"identity.idp": player.identity.idp, 
+		"identity.idpUsername": player.identity.idpUsername
+	}, player, { upsert: true });
 };
 
-PlayerRepository.prototype.dropIndices = function() {
-	return this.collection.dropIndexesAsync();
+PlayerRepository.prototype.removeByIdentity = function(identity) {
+	return this._collection.deleteOneAsync({
+		"identity.idp": identity.idp,
+		"identity.idpUsername": identity.idpUsername
+	});
 };
 
-exports.open = function(db) {
-	return new PlayerRepository(db);	
-};
+module.exports = repository.generateExports(PlayerRepository);
 
