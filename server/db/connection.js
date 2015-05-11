@@ -17,15 +17,14 @@ function openMongoConnection(schemaName, db) {
 		connectionReference = _mongoConnections[schemaName] = {
 			referenceCount: 1,
 			connection: MongoClient.connectAsync(db.connectionString, db.options)
-				.disposer(function(connection) {
-					_mongoConnections[schemaName].referenceCount = _mongoConnections[schemaName].referenceCount - 1;
-					if (0 === _mongoConnections[schemaName].referenceCount) {
-						connection.close();	
-					}
-				})
 		};
 	}
-	return connectionReference.connection;
+	return connectionReference.connection.disposer(function(connection) {
+		_mongoConnections[schemaName].referenceCount = _mongoConnections[schemaName].referenceCount - 1;
+		if (0 === _mongoConnections[schemaName].referenceCount) {
+			connection.close();	
+		}
+	});
 }
 
 function openRedisConnection(db) {
@@ -58,3 +57,4 @@ exports.connectToRedisDatabase = function(dbType) {
 exports.connectToSessionDatabase = function() {
 	return exports.connectToRedisDatabase('session');
 };
+

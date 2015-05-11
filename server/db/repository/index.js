@@ -1,6 +1,7 @@
 "use strict";
 
-var Promise = require('bluebird');
+var Promise = require('bluebird'),
+	merge = require('../../util/merge');
 
 exports.generate = function(schemaName, collectionName, indexes) {
 	function RepositoryConstructor(db) {
@@ -36,4 +37,13 @@ exports.generateExports = function(RepoConstructor) {
 		schemaName: RepoConstructor.schemaName,
 		collectionName: RepoConstructor.collectionName
 	};
+};
+
+exports.hydrateOne = function(proto, promise) {
+	return promise.then(function(oneFromDb) {
+		if (!oneFromDb) {
+			return null;
+		}
+		return merge(proto(), oneFromDb);
+	});	
 };

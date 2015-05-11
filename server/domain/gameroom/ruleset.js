@@ -14,6 +14,9 @@ exports.createRuleset = function(id, name) {
         throw new Error("must provide id and name");
     }
 	
-	var ruleset = new Ruleset(id, name);
-	return ruleset;
+	return new Ruleset(id, name);
+};
+
+exports.create = function() {
+	return new Ruleset(null, null);
 };

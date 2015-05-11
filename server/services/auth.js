@@ -3,8 +3,10 @@
 var path = require('path'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    Player = require('../models/Player');
-
+    Promise = require('bluebird'),
+    identity = require('../domain/player/identity'),
+    playerRepository = require('../db/repository/player'),
+    connection = require('../db/connection');
 
 var anonymousUrlPrefixes = [
 	'/lib/',
@@ -21,36 +23,37 @@ var anonymousUrlPrefixes = [
 // configure passport for local authentication
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        Player.findOne({ idp: 'this', idpUsername: username }, function (err, player) {
-            if (err) { 
-                return done(err); 
-            }
-            if (!player) {
-                return done(null, false, { src: 'login', err: 'userpass', message: 'Incorrect username or password.' });
-            }
-            player.checkPassword(password, function(err, isMatch) {
-                if (err) {
-                    return done(err);
-                }
-                if (isMatch) {
-                    return done(null, player);
-                } else {
-                    return done(null, false, { src: 'login', err: 'userpass', message: 'Incorrect username or password.' });
-                }
-            });
+        return identity.createPlaychaserIdentity(username)
+            .then(function(ident) {
+                Promise.using(connection.connectToPlayerDatabase(), function(db) {
+                    return playerRepository.open(db).loadSingleByIdentity(ident)
+                        .then(function(player) {
+                            if (!player) {
+                                return false;
+                            }
+                            return player.identity.checkPassword(password)
+                                .then(function(matched) {
+                                    if (!matched) {
+                                        return false;
+                                    }
+                                    return player;
+                                });
+                        }).nodeify(done);        
+                });
         });
     }
 ));
 
 // set up session serialization
 passport.serializeUser(function(user, done) {
-  done(null, user._id);
+    done(null, user._id);
 });
 
 passport.deserializeUser(function(_id, done) {
-  Player.findById(_id, function(err, user) {
-    done(err, user);
-  });
+    return Promise.using(connection.connectToPlayerDatabase(), function(db) {
+            return playerRepository.open(db).loadSingleById(_id)
+                .nodeify(done);
+        });
 });
 
 // middleware to enforce authentication on requests

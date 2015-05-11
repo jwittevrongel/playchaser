@@ -62,3 +62,7 @@ module.exports.createPlaychaserIdentity = function(emailAddress, password) {
 	return Promise.resolve(identity);
 };
 
+module.exports.create = function() {
+	return new Identity(null);
+};
+
