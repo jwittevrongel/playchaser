@@ -18,7 +18,8 @@ var SCHEMA = 'player',
 		
 	}];
 
-var repository = require('./');
+var repository = require('./'),
+	mongodb = require('mongodb');
 
 var PlayerRepository = repository.generate(SCHEMA, COLLECTION, INDEXES);
 	
@@ -34,6 +35,25 @@ PlayerRepository.prototype.removeByIdentity = function(identity) {
 		"identity.idp": identity.idp,
 		"identity.idpUsername": identity.idpUsername
 	});
+};
+
+PlayerRepository.prototype.loadSingleById = function(id) {
+	return this._colleciton.findOneAsync({ 
+		"_id" : new mongodb.ObjectID(id) 
+	});
+};
+
+PlayerRepository.prototype.loadSingleByIdentity = function(identity) {
+	return this._colleciton.findOneAsync({
+		"identity.idp": identity.idp,
+		"identity.idpUsername": identity.idpUsername
+	});	
+};
+
+PlayerRepository.prototype.loadSingleByMoniker = function(moniker) {
+	return this._collection.findOneAsync({
+		"profile.public.moniker": moniker
+	});	
 };
 
 module.exports = repository.generateExports(PlayerRepository);
