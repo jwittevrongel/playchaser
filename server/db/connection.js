@@ -1,15 +1,31 @@
 "use strict";
 
 var Promise = require('bluebird'),
-    mongodb = Promise.promisifyAll(require('mongodb')),
+	mongodb = Promise.promisifyAll(require('mongodb')),
+    MongoClient = Promise.promisifyAll(mongodb.MongoClient),
 	redis = Promise.promisifyAll(require('redis')),
 	config = require('../config');
 	
-function openMongoConnection(db) {
-	return mongodb.connectAsync(db.connectionString, db.options)
-		.disposer(function(connection) {
-			connection.close();
-		});
+
+var _mongoConnections = { };
+
+function openMongoConnection(schemaName, db) {
+	var connectionReference = _mongoConnections[schemaName];
+	if (connectionReference && connectionReference.referenceCount > 0) {
+		connectionReference.referenceCount = connectionReference.referenceCount + 1;
+	} else {
+		connectionReference = _mongoConnections[schemaName] = {
+			referenceCount: 1,
+			connection: MongoClient.connectAsync(db.connectionString, db.options)
+				.disposer(function(connection) {
+					_mongoConnections[schemaName].referenceCount = _mongoConnections[schemaName].referenceCount - 1;
+					if (0 === _mongoConnections[schemaName].referenceCount) {
+						connection.close();	
+					}
+				})
+		};
+	}
+	return connectionReference.connection;
 }
 
 function openRedisConnection(db) {
@@ -19,8 +35,8 @@ function openRedisConnection(db) {
 		});
 }
 
-exports.connectToMongoDatabase = function(dbType) {
-	return openMongoConnection(config.db.mongo[dbType]);
+exports.connectToMongoDatabase = function(schemaName) {
+	return openMongoConnection(schemaName, config.db.mongo[schemaName]);
 };
 
 exports.connectToPlayerDatabase = function() {
