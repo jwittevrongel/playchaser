@@ -5,7 +5,6 @@ var Promise = require('bluebird'),
     MongoClient = Promise.promisifyAll(mongodb.MongoClient),
 	redis = Promise.promisifyAll(require('redis')),
 	config = require('../config');
-	
 
 var _mongoConnections = { };
 
@@ -16,15 +15,16 @@ function openMongoConnection(schemaName, db) {
 	} else {
 		connectionReference = _mongoConnections[schemaName] = {
 			referenceCount: 1,
-			connection: MongoClient.connectAsync(db.connectionString, db.options)
+			connection: MongoClient.connectAsync(db.connectionString, db.options),
+			disposer: function(connection) {
+				_mongoConnections[schemaName].referenceCount = _mongoConnections[schemaName].referenceCount - 1;
+				if (0 === _mongoConnections[schemaName].referenceCount) {
+					connection.close();	
+				}
+			}
 		};
 	}
-	return connectionReference.connection.disposer(function(connection) {
-		_mongoConnections[schemaName].referenceCount = _mongoConnections[schemaName].referenceCount - 1;
-		if (0 === _mongoConnections[schemaName].referenceCount) {
-			connection.close();	
-		}
-	});
+	return connectionReference.connection.disposer(connectionReference.disposer);
 }
 
 function openRedisConnection(db) {

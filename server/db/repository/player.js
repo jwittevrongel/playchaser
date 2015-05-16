@@ -20,8 +20,7 @@ var SCHEMA = 'player',
 
 var repository = require('./'),
 	mongodb = require('mongodb'),
-	player = require('../../domain/player'),
-	identity = require('../../domain/player/identity');
+	player = require('../../domain/player');
 
 var PlayerRepository = repository.generate(SCHEMA, COLLECTION, INDEXES);
 
@@ -29,13 +28,18 @@ PlayerRepository.prototype.save = function(player) {
 	return this._collection.updateOneAsync({
 		"identity.idp": player.identity.idp, 
 		"identity.idpUsername": player.identity.idpUsername
-	}, player, { upsert: true });
+	}, player, { upsert: true })
+	.then(function() {
+		return player;	
+	});
 };
 
 PlayerRepository.prototype.removeByIdentity = function(identity) {
 	return this._collection.deleteOneAsync({
 		"identity.idp": identity.idp,
 		"identity.idpUsername": identity.idpUsername
+	}).then(function() {
+		return true;	
 	});
 };
 

@@ -30,4 +30,12 @@ function merge() {
 	return target;
 }
 
-module.exports = merge;
+function clone(obj) {
+	if (getType(obj) !== 'object') {
+		return obj;
+	}
+	return mergeTwo({}, obj);
+}
+
+exports.merge = merge;
+exports.clone = clone;

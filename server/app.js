@@ -15,7 +15,8 @@ var express = require('express'),
 	// WebSocketServer = require('./websockets'),
 	RedisStore = require('connect-redis')(session),
 	Promise = require('bluebird'),
-	dbConnection = require('./db/connection');
+	dbConnection = require('./db/connection'),
+	restApi = require('./api/rest');	
 
 var app = express();
 app.set('port', config.port || 3000);
@@ -70,8 +71,9 @@ var server = http.Server(app);
 //});
 
 // routes
-authentication.configureRoutes(app);
+restApi.configureRoutes(app);
 config.clientEnvironment.configureRoutes(app);
+
 // gameEngine.configureRoutes(app);
 // wsServer.route('foo');
 
@@ -83,7 +85,7 @@ Promise.using(
 		server.listen(app.get('port'), function() {
   			console.log('Playchaser running on port ' + app.get('port'));
 		});
-		return new Promise(function(resolve, reject) {
+		return new Promise(function(resolve) {
 			server.on('close', resolve);
 		});
 	});

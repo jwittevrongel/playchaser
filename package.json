@@ -17,7 +17,7 @@
     "errorhandler": "^1.1.1",
     "express": "^4.10.4",
     "express-session": "^1.6.5",
-    "extend": "^2.0.0",
+    "http-status-codes": "^1.0.5",
     "knuth-shuffle": "^1.0.1",
     "mongodb": "^2.0.31",
     "morgan": "^1.2.0",
