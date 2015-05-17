@@ -5,7 +5,7 @@ var SCHEMA = 'gameLibrary',
 
 var repository = require('./');
 
-var Rulebook= repository.generate(SCHEMA, COLLECTION);
+var Rulebook = repository.generate(SCHEMA, COLLECTION);
 
 Rulebook.prototype.save = function(rulebook) {
 	return this._collection.updateOneAsync({

@@ -19,6 +19,7 @@
     "express-session": "^1.6.5",
     "http-status-codes": "^1.0.5",
     "knuth-shuffle": "^1.0.1",
+    "lodash": "^3.8.0",
     "mongodb": "^2.0.31",
     "morgan": "^1.2.0",
     "nconf": "^0.6.7",

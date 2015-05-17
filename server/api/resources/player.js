@@ -1,6 +1,6 @@
 "use strict";
 
-var util = require('../../util'),
+var _ = require('lodash'),
     ResourceError = require('./error'),
 	Promise = require('bluebird'),
 	HttpStatus = require('http-status-codes'),
@@ -17,7 +17,7 @@ var presenters = {
 		return presented;
 	},
 	entirePlayer: function(player) {
-		var presented = util.clone(player);
+		var presented = _.merge({}, player);
 		delete presented._id;
 		delete presented.identity.passwd;
 		return presented;
