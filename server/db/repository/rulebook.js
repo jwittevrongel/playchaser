@@ -3,9 +3,10 @@
 var SCHEMA = 'gameLibrary',
     COLLECTION = 'rulebooks';
 
-var repository = require('./');
+var repository = require('./'),
+    rulebook = require('../../domain/gameroom/rulebook');
 
-var Rulebook = repository.generate(SCHEMA, COLLECTION);
+var Rulebook = repository.generateMongoRepository(SCHEMA, COLLECTION);
 
 Rulebook.prototype.save = function(rulebook) {
 	return this._collection.updateOneAsync({
@@ -23,11 +24,11 @@ Rulebook.prototype.removeById = function(id) {
 };
 
 Rulebook.prototype.findById = function(id) {
-	return this._collection.findOneAsync({
+	return this.hydrateOne(rulebook.create, this._collection.findOneAsync({
 		"_id": id
-	});
+	}));
 };
 
-module.exports = repository.generateExports(Rulebook);
+module.exports = repository.generateMongoExports(Rulebook);
 
 

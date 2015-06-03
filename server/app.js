@@ -80,7 +80,8 @@ config.clientEnvironment.configureRoutes(app);
 Promise.using(
 	dbConnection.connectToPlayerDatabase(), 
 	dbConnection.connectToGameLibraryDatabase(),
-	dbConnection.connectToGameHistoryDatabase(), 
+	dbConnection.connectToGameHistoryDatabase(),
+	dbConnection.connectToGameRoomDatabase(), 
 	function() {
 		server.listen(app.get('port'), function() {
   			console.log('Playchaser running on port ' + app.get('port'));

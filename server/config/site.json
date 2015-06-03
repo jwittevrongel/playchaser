@@ -20,7 +20,13 @@
         "redis": {
             "session": {
                 "host": "localhost",
-                "port": 6379
+                "port": 6379,
+                "canSubscribe": false
+            },
+            "gameRoom": {
+                "host": "localhost",
+                "port": 6379,
+                "canSubscribe": true
             }
         }
     },

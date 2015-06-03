@@ -22,7 +22,7 @@ var repository = require('./'),
 	mongodb = require('mongodb'),
 	player = require('../../domain/player');
 
-var PlayerRepository = repository.generate(SCHEMA, COLLECTION, INDEXES);
+var PlayerRepository = repository.generateMongoRepository(SCHEMA, COLLECTION, INDEXES);
 
 PlayerRepository.prototype.save = function(player) {
 	return this._collection.updateOneAsync({
@@ -44,23 +44,23 @@ PlayerRepository.prototype.removeByIdentity = function(identity) {
 };
 
 PlayerRepository.prototype.loadSingleById = function(id) {
-	return repository.hydrateOne(player.create, this._collection.findOneAsync({ 
+	return this.hydrateOne(player.create, this._collection.findOneAsync({ 
 		"_id" : new mongodb.ObjectID(id) 
 	}));
 };
 
 PlayerRepository.prototype.loadSingleByIdentity = function(identity) {
-	return repository.hydrateOne(player.create, this._collection.findOneAsync({
+	return this.hydrateOne(player.create, this._collection.findOneAsync({
 		"identity.idp": identity.idp,
 		"identity.idpUsername": identity.idpUsername
 	}));
 };
 
 PlayerRepository.prototype.loadSingleByMoniker = function(moniker) {
-	return repository.hydrateOne(player.create, this._collection.findOneAsync({
+	return this.hydrateOne(player.create, this._collection.findOneAsync({
 		"profile.public.moniker": moniker
 	}));
 };
 
-module.exports = repository.generateExports(PlayerRepository);
+module.exports = repository.generateMongoExports(PlayerRepository);
 

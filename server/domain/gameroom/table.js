@@ -26,7 +26,7 @@ Table.prototype.join = function(player) {
 };
 
 Table.prototype.hasOpenSeats = function() {
-	return(this.seats.length < this.rulebook.participants.max);
+	return(!this.game && (this.seats.length < this.rulebook.participants.max));
 };
 
 Table.prototype.leave = function(player) {

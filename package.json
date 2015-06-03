@@ -17,6 +17,7 @@
     "errorhandler": "^1.1.1",
     "express": "^4.10.4",
     "express-session": "^1.6.5",
+    "hiredis": "^0.3.0",
     "http-status-codes": "^1.0.5",
     "knuth-shuffle": "^1.0.1",
     "lodash": "^3.8.0",
