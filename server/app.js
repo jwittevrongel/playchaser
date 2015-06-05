@@ -45,13 +45,16 @@ var passportInit = passport.initialize();
 var passportSession = passport.session();
 app.use(passportInit);
 app.use(passportSession);
-app.use(authentication);
 
+// static before authenticaiton so static content all served anonymously
+// in production, static content would be served by nginx anyways
 if ('development' == app.get('env')) {
 	app.use(express.static(path.join(__dirname, '..', 'client')));
 } else {
 	app.use(express.static(path.join(__dirname, '..', 'static')));
 }
+
+app.use(authentication);
 
 // add error handler in development only
 if ('development' == app.get('env')) {

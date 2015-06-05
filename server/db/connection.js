@@ -44,20 +44,20 @@ function openMongoConnection(schemaName, db) {
 }
 
 function openRedisPublisherConnection(db) {
-	return redis.createClientAsync(db.port, db.host, db.options);
+	return redis.createClient(db.port, db.host, db.options);
 }
 
 function openRedisSubscriberConnection(db) {
 	if (!db.canSubscribe) {
-		return Promise.resolve(undefined);
+		return undefined;
 	}
-	return redis.createClientAsync(db.port, db.host, db.options);
+	return redis.createClient(db.port, db.host, db.options);
 }
 
 function redisConnector(db) {
 	return Promise.join(openRedisPublisherConnection(db), openRedisSubscriberConnection(db), function(publisher, subscriber) {
 		return { publisher: publisher, subscriber: subscriber };
-	});
+	}); 
 }
 
 function redisCloser(connection) {
@@ -87,11 +87,11 @@ exports.connectToGameHistoryDatabase = function() {
 	return exports.connectToMongoDatabase('gameHistory');
 };
 
-exports.connectToRedisDatabase = function(dbType) {
-	return openRedisConnection(config.db.redis[dbType]);
+exports.connectToRedisDatabase = function(schemaName) {
+	return openRedisConnection(schemaName, config.db.redis[schemaName]);
 };
 
 exports.connectToGameRoomDatabase = function() {
-	return exports.connectToRedisDatabse('gameRoom');
+	return exports.connectToRedisDatabase('gameRoom');
 };
 
