@@ -64,7 +64,8 @@ function htmlTask() {
 	 					collapseBooleanAttributes: true,
 	 					removeAttributeQuotes: true,
 	 					removeRedundantAttributes: true,
-	 					removeEmptyAttributes: true
+	 					removeEmptyAttributes: true,
+						minifyJS : true
 	 				}))
      	.pipe(rename({dirname: '.'}))
 	 	.pipe(gulp.dest('static'));

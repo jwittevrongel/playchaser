@@ -7,7 +7,6 @@ var express = require('express'),
     authentication = require('./services/auth'),
     config = require ('./config'),
     bodyParser = require('body-parser'),
-    cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	morgan = require('morgan'),
 	compression = require('compression'),
@@ -22,38 +21,37 @@ var app = express();
 app.set('port', config.port || 3000);
 app.use(compression());
 app.use(morgan('dev'));
-var cookieParserInstance = cookieParser(config.session.secrets.cookie);
-app.use(cookieParserInstance);
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({strict: false}));
 
-var sessionStore = new RedisStore(config.db.redis.session);
-var expressSession = session({ 
-	secret: config.session.secrets.express, 
-	cookie: {
-		path: '/',
-		httpOnly: true,
-		maxAge: config.session.timeout
-	},
-	store: sessionStore,
-	resave: true,
-	saveUninitialized: true
-});
-
-app.use(expressSession);
-var passportInit = passport.initialize();
-var passportSession = passport.session();
-app.use(passportInit);
-app.use(passportSession);
-
-// static before authenticaiton so static content all served anonymously
-// in production, static content would be served by nginx anyways
+// static before session, authenticaiton etc. so static content all served anonymously
+// in production, static content would be served by nginx anyways so this is a match
 if ('development' == app.get('env')) {
 	app.use(express.static(path.join(__dirname, '..', 'client')));
 } else {
 	app.use(express.static(path.join(__dirname, '..', 'static')));
 }
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({strict: false}));
+
+var expressSession = session({
+	name: 'pc.sess',
+	secret: config.session.secrets.express, 
+	cookie: {
+		httpOnly: false,
+		path: '/',
+		maxAge: config.session.timeout
+	},
+	store: new RedisStore(config.db.redis.session),
+	resave: true,
+	saveUninitialized: true
+});
+var passportInit = passport.initialize();
+var passportSession = passport.session();
+
+app.use(expressSession);
+
+app.use(passportInit);
+app.use(passportSession);
 app.use(authentication);
 
 // add error handler in development only
@@ -66,7 +64,6 @@ var server = http.Server(app);
 //var wsServer = new WebSocketServer({
 //	server: server,
 //	authenticationMiddleware: [
-//		cookieParserInstance,
 //		expressSession,
 //		passportInit,
 //		passportSession

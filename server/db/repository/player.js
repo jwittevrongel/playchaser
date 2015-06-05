@@ -18,11 +18,21 @@ var SCHEMA = 'player',
 		
 	}];
 
-var repository = require('./'),
+var Promise = require('bluebird'),
+	repository = require('./'),
 	mongodb = require('mongodb'),
-	player = require('../../domain/player');
+	player = require('../../domain/player'),
+	identityDomain = require('../../domain/player/identity');
 
 var PlayerRepository = repository.generateMongoRepository(SCHEMA, COLLECTION, INDEXES);
+
+function hydrateIdentity(player) {
+	return repository.hydrateOne(identityDomain.create, Promise.resolve(player.identity))
+		.then(function(identity){
+			player.identity = identity;
+			return player;
+		});
+}
 
 PlayerRepository.prototype.save = function(player) {
 	return this._collection.updateOneAsync({
@@ -46,20 +56,20 @@ PlayerRepository.prototype.removeByIdentity = function(identity) {
 PlayerRepository.prototype.loadSingleById = function(id) {
 	return this.hydrateOne(player.create, this._collection.findOneAsync({ 
 		"_id" : new mongodb.ObjectID(id) 
-	}));
+	})).then(hydrateIdentity);
 };
 
 PlayerRepository.prototype.loadSingleByIdentity = function(identity) {
 	return this.hydrateOne(player.create, this._collection.findOneAsync({
 		"identity.idp": identity.idp,
 		"identity.idpUsername": identity.idpUsername
-	}));
+	})).then(hydrateIdentity);
 };
 
 PlayerRepository.prototype.loadSingleByMoniker = function(moniker) {
 	return this.hydrateOne(player.create, this._collection.findOneAsync({
 		"profile.public.moniker": moniker
-	}));
+	})).then(hydrateIdentity);
 };
 
 module.exports = repository.generateMongoExports(PlayerRepository);

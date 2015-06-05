@@ -48,6 +48,12 @@ module.exports = function(req, res, next) {
     // enforce authentication for the request
     
     if (!req.user) {
+        
+        // allow interactions to log in
+        if (req.path == '/login') {
+            return next();
+        }
+        
     	// allow some interactions with /players to facilitate creating new accounts
         if (req.path == '/players') {
             if (req.method == 'POST') {

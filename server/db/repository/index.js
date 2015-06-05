@@ -3,16 +3,16 @@
 var Promise = require('bluebird'),
 	_ = require('lodash');
 
-function hydrateOne(proto, promise) {
+exports.hydrateOne = function(proto, promise) {
 	return promise.then(function(oneFromDb) {
 		if (!oneFromDb) {
 			return null;
 		}
 		return _.merge(proto(), oneFromDb);
 	});	
-}
+};
 
-function hydrateMany(proto, promise) {
+exports.hydrateMany = function(proto, promise) {
 	return promise.then(function(manyFromDb) {
 		if (!manyFromDb) {
 			return null;
@@ -21,7 +21,7 @@ function hydrateMany(proto, promise) {
 			return _.merge(proto(), oneFromDb);
 		});
 	});	
-}
+};
 
 exports.generateMongoRepository = function(schemaName, collectionName, indexes) {
 	function MongoRepository(db) {
@@ -47,8 +47,8 @@ exports.generateMongoRepository = function(schemaName, collectionName, indexes) 
 		};
 	}
 	
-	MongoRepository.prototype.hydrateOne = hydrateOne;
-	MongoRepository.prototype.hydrateMany = hydrateMany;
+	MongoRepository.prototype.hydrateOne = exports.hydrateOne;
+	MongoRepository.prototype.hydrateMany = exports.hydrateMany;
 	
 	return MongoRepository;
 };
@@ -91,8 +91,8 @@ exports.generateRedisRepository = function(schemaName, collectionName) {
 		return this._publisher.incrAsync(_nextIdKey);
 	};
 	
-	RedisRepository.prototype.hydrateOne = hydrateOne;
-	RedisRepository.prototype.hydrateMany = hydrateMany;
+	RedisRepository.prototype.hydrateOne = exports.hydrateOne;
+	RedisRepository.prototype.hydrateMany = exports.hydrateMany;
 	
 	return RedisRepository;
 };
