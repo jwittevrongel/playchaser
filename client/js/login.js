@@ -50,7 +50,7 @@
 
 		.controller('pcLoginCtrl', function($scope, $http, $window, $location, pcEnvironment) {
 			$scope.errorMessages = {};
-			if ($location.hash === '/login?timeout') {
+			if ($location.path() === '/timeout') {
 				$scope.errorMessages.login = "Your playchaser session timed out. Please log in again.";
 			}
 			$scope.doLogin = function(login) {
