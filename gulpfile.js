@@ -88,24 +88,33 @@ gulp.task('client-copy', function() {
 		.pipe(gulp.dest('bld'));
 });
 
-var clientMainJsFiles = ['client/js/index.js', 'client/js/login.js', 'client/js/production-mode.js'];
-gulp.task('client-main-js', function() {
-	return eventstream.merge.apply(eventstream, ['index', 'login'].map(function(mainfile) {
-		return gulp.src(['client/js/' + mainfile + '.js', 'client/js/production-mode.js'], {base: 'client'})
-			.pipe(ngAnnotate({add: true}))
-			.pipe(concat('js/' + mainfile + '.min.js'))
-			.pipe(uglify('js/' + mainfile + '.min.js'))
-			.pipe(rev())
-			.pipe(gulp.dest('static'))
-			.pipe(rev.manifest({path:'client-main-js-' + mainfile + '.manifest.json'}))
-			.pipe(gulp.dest('bld'));
-		})
-	);
+var clientIndexJsFiles = ['client/js/index.js', 'client/js/production-mode.js'];
+gulp.task('client-index-js', function() {
+	return gulp.src(['client/js/index.js', 'client/js/production-mode.js'], {base: 'client'})
+		.pipe(ngAnnotate({add: true}))
+		.pipe(concat('js/index.min.js'))
+		.pipe(uglify('js/index.min.js'))
+		.pipe(rev())
+		.pipe(gulp.dest('static'))
+		.pipe(rev.manifest({path:'client-index-js.manifest.json'}))
+		.pipe(gulp.dest('bld'));
 });
 
-var clientHtmlTemplates = ['client/js/**/*.html'];
-gulp.task('client-template-js', function() {
-	return gulp.src(clientHtmlTemplates)
+var clientLoginJsFiles = ['client/js/login.js', 'client/js/production-mode.js'];
+gulp.task('client-login-js', function() {
+	return gulp.src(['client/js/login.js', 'client/js/production-mode.js'], {base: 'client'})
+		.pipe(ngAnnotate({add: true}))
+		.pipe(concat('js/login.min.js'))
+		.pipe(uglify('js/login.min.js'))
+		.pipe(rev())
+		.pipe(gulp.dest('static'))
+		.pipe(rev.manifest({path:'client-login-js.manifest.json'}))
+		.pipe(gulp.dest('bld'));
+});
+
+var coreHtmlTemplates = ['client/js/core/**/*.html'];
+gulp.task('core-template-html', function() {
+	return gulp.src(coreHtmlTemplates)
 		.pipe(htmlmin({
 	 					removeComments: true,
 	 					collapseWhitespace: true,
@@ -115,18 +124,18 @@ gulp.task('client-template-js', function() {
 	 					removeEmptyAttributes: true
 	 				}))
 		.pipe(ngTemplates({ module: 'playchaser', filename: '_templates.js', standalone: false, path: function (path, base) {
-                return path.replace(base, 'js/');
+                return path.replace(base, 'js/core/');
             } 
         }))
 		
 		.pipe(header('(function(angular){\n"use strict";\n'))
 		.pipe(footer('\n})(angular);'))
-		.pipe(gulp.dest('client/js'));
+		.pipe(gulp.dest('client/js/core'));
 });
 
-var clientPlaychaserJsFiles = ['client/js/playchaser.js', 'client/js/**/*.js', '!client/js/index.js', '!client/js/login.js', '!client/js/environment-test.js', '!client/js/production-mode.js'];
-gulp.task('client-playchaser-js', ['client-template-js'], function() {
-	return gulp.src(clientPlaychaserJsFiles, {base: 'client'})
+var clientCoreJsFiles = ['client/js/core/module.js', 'client/js/core/**/*.js'];
+gulp.task('client-playchaser-js', ['core-template-html'], function() {
+	return gulp.src(clientCoreJsFiles, {base: 'client'})
 		.pipe(ngAnnotate({add: true}))
 		.pipe(concat('js/playchaser.min.js'))
 		.pipe(uglify('js/playchaser.min.js'))
@@ -150,15 +159,16 @@ gulp.task('watch', function() {
 	gulp.watch(lessSources, ['client-less']);
 	gulp.watch(clientFilesToCopy, ['client-copy']);
 	gulp.watch([clientMainHtml, clientManifestFiles], ['client-html-watched']);
-	gulp.watch(clientMainJsFiles, ['client-main-js']);
-	gulp.watch(clientHtmlTemplates, ['client-playchaser-js']);
-	gulp.watch(clientPlaychaserJsFiles.concat('!client/js/_templates.js'), ['client-playchaser-js']);
+	gulp.watch(clientIndexJsFiles, ['client-index-js']);
+	gulp.watch(clientLoginJsFiles, ['client-login-js']);
+	gulp.watch(coreHtmlTemplates, ['client-playchaser-js']);
+	gulp.watch(clientCoreJsFiles.concat('!client/js/core/_templates.js'), ['client-playchaser-js']);
 	gulp.watch(allServerJsFiles, ['server-test']);
 });
 
 gulp.task('all-test', ['server-test', 'client-test']);
 gulp.task('rev-all', ['client-less', 'client-js', 'client-copy']);
-gulp.task('client-js', ['client-main-js', 'client-playchaser-js']);
+gulp.task('client-js', ['client-index-js', 'client-login-js', 'client-playchaser-js']);
 gulp.task('client-all', ['client-less', 'client-html-build', 'client-js', 'client-copy', 'client-copy-lib']);
 gulp.task('default', ['all-jshint', 'all-test', 'client-all']);
 
