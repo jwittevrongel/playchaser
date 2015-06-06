@@ -10,16 +10,25 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Playchaser - Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" href="img/icon64.png">
-        <link rel="apple-touch-icon" sizes="144x144" type="image/png" href="img/icon144.png">
-        <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="img/icon114.png">
-        <link rel="apple-touch-icon" sizes="72x72" type="image/png" href="img/icon72.png">
-        <link rel="apple-touch-icon" sizes="57x57" type="image/png" href="img/icon57.png">
+        <link rel="icon" type="image/png" href="img/appicon64.png">
+        <link rel="apple-touch-icon" sizes="144x144" type="image/png" href="img/appicon144.png">
+        <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="img/appicon114.png">
+        <link rel="apple-touch-icon" sizes="72x72" type="image/png" href="img/appicon72.png">
+        <link rel="apple-touch-icon" sizes="57x57" type="image/png" href="img/appicon57.png">
+        <link rel="stylesheet" href="lib/angular-material-0.9.7/angular-material.min.css">
         <!-- build:css css/login.min.css -->
         <link rel="stylesheet" href="css/login.css">
         <!-- /build -->
     </head>
-    <body ng-controller="pcLoginCtrl">
+    
+    <body ng-controller="pcLoginCtrl" layout="column">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+              <span><span class="playchaser-logo"></span> Playchaser</span>
+            </div>
+        </md-toolbar>
+        
+        <!--
         <div class="header">
             <h1 class="masthead"><span class="playchaser-logo"></span> Playchaser</h1>
         </div>
@@ -42,9 +51,11 @@
           <div class="about-playchaser">
               Playchaser is ...
           </div>
-        </div>
+        </div> -->
         <script src="lib/angular-1.3.16/angular.min.js"></script>
-
+        <script src="lib/angular-1.3.16/angular-animate.min.js"></script>
+        <script src="lib/angular-1.3.16/angular-aria.min.js"></script>
+        <script src="lib/angular-material-0.9.7/angular-material.min.js"></script>
         <!-- build:js js/login.min.js -->
         <script src="js/login.js"></script>
         <!-- /build -->
@@ -53,5 +64,5 @@
         <script src="js/environment-test.js"></script>
         <!-- /build -->
         
-    </body>
+    </body> 
 </html>
