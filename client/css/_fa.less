@@ -1,17 +1,7 @@
+// font-awesome custom CSS imports
+@import "../lib/font-awesome-4.3.0/less/variables";
+@fa-font-path: "../lib/font-awesome-4.3.0/fonts";
+@import "../lib/font-awesome-4.3.0/less/path";
+@import "../lib/font-awesome-4.3.0/less/core";
+@import "../lib/font-awesome-4.3.0/less/icons";
 
-.fa-icon(@name){
-  display: inline-block;
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  @the-icon: ~"@{fa-var-@{name}}";
-  content: "@{the-icon}";
-}
-
-.fa-reverse-icon(@name){
-  .fa-icon(@name);
-  color: @fa-inverse;
-}

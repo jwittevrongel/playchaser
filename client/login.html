@@ -28,13 +28,34 @@
             </div>
         </md-toolbar>
         <md-content layout-padding layout="column">
-            <md-tabs>
+            <md-tabs md-center>
                 <md-tab>
-                    <md-tab-label>Sign in</md-tab-label>
-                    <md-tab-body>Sign in form goes here...</md-tab-body>
+                    <md-tab-label>Get Chasing!</md-tab-label>
+                    <md-tab-body>
+                        <md-content layout-padding>
+                            <form name="loginForm" autocomplete="on" novalidate ng-submit="doLogin(login)">
+                              <md-input-container>
+                                <label>E-mail address</label>
+                                <md-icon></md-icon>
+                                <input name="username" type="email" required autofocus ng-model="login.username">
+                                <div ng-messages="loginForm.username.$error">
+                                  <div ng-message="required">Enter your e-mail address to login</div>
+                                  <div ng-message="email">Enter a valid e-mail address</div>
+                                </div>
+                              </md-input-container>
+                              <md-input-container>
+                                <label>Password</label>
+                                <input name="password" type="password" required ng-model="login.password">
+                                <div ng-messages="projectForm.password.$error">
+                                  <div ng-message="required">Enter your password to login</div>
+                                </div>
+                              </md-input-container>
+                            </form>
+                        </md-content>
+                    </md-tab-body>
                 </md-tab>
                 <md-tab>
-                    <md-tab-label>Sign up</md-tab-label>
+                    <md-tab-label>Not A Member? Sign up Now!</md-tab-label>
                     <md-tab-body>New User form goes here</md-tab-body>
                 </md-tab>
             </md-tabs>
