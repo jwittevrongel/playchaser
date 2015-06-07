@@ -1,6 +1,6 @@
 (function(angular) {
 	"use strict";
-	angular.module('playchaser.login', ['playchaser.environment', 'playchaser', 'ngMaterial'])
+	angular.module('playchaser.login', ['playchaser.environment', 'playchaser', 'ngMaterial', 'ngMessages'])
 		.directive('pcValidateEqual', function() {
 			return {
 				restrict: 'A',
