@@ -1,4 +1,4 @@
 (function(angular){
 	"use strict";
-	angular.module('playchaser', []);
+	angular.module('playchaser', ['ngMaterial']);
 })(angular);
