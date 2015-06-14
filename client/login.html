@@ -15,7 +15,7 @@
         <link rel="apple-touch-icon" sizes="114x114" type="image/png" href="img/appicon114.png">
         <link rel="apple-touch-icon" sizes="72x72" type="image/png" href="img/appicon72.png">
         <link rel="apple-touch-icon" sizes="57x57" type="image/png" href="img/appicon57.png">
-        <link rel="stylesheet" href="lib/angular-material-0.9.8-rc1/angular-material.min.css">
+        <link rel="stylesheet" href="lib/angular-material-0.9.8/angular-material.min.css">
         <link rel="stylesheet" href="lib/font-awesome-4.3.0/css/font-awesome.min.css">
         <!-- build:css css/login.min.css -->
         <link rel="stylesheet" href="css/login.css">
@@ -39,7 +39,7 @@
                             <form name="loginForm" autocomplete="on" novalidate ng-submit="doLogin(login)">
                               <md-input-container class="md-icon-float">
                                 <label>E-mail address</label>
-                                <md-icon md-font-icon="fa-envelope" class="fa fa-lg"></md-icon> 
+                                <md-icon md-font-icon="fa-envelope" class="fa"></md-icon> 
                                 <input name="username" type="email" required autofocus ng-model="login.username" ng-model-options="{updateOn: 'blur'}">
                                 <div ng-messages="loginForm.username.$error" ng-if='loginForm.username.$dirty'>
                                   <div ng-message="required">Enter your e-mail address to login</div>
@@ -48,14 +48,14 @@
                               </md-input-container>
                               <md-input-container class="md-icon-float">
                                 <label>Password</label>
-                                <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon> 
+                                <md-icon md-font-icon="fa-key" class="fa"></md-icon> 
                                 <input name="password" type="password" required ng-model="login.password">
                                 <div ng-messages="loginForm.password.$error" ng-if='loginForm.password.$dirty'>
                                   <div ng-message="required">Enter your password to login</div>
                                 </div>
                               </md-input-container>
                               <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="loginForm.$invalid" layout="row" layout-align="center center">
-                                <md-icon md-font-icon="fa-lock" class="fa fa-lg"></md-icon> 
+                                <md-icon md-font-icon="fa-lock" class="fa"></md-icon> 
                                <span>Sign in</span>
                              </md-button>
                             </form>
@@ -82,7 +82,7 @@
                               </md-input-container>
                               <md-input-container class="md-icon-float">
                                 <label>E-mail address</label>
-                                <md-icon md-font-icon="fa-envelope" class="fa fa-lg"></md-icon> 
+                                <md-icon md-font-icon="fa-envelope" class="fa"></md-icon> 
                                 <input name="username" type="email" required autofocus ng-model="signup.username" ng-model-options="{updateOn: 'blur', debounce : { 'default' : 500, blur : 0 } }">
                                 <div ng-messages="signupForm.username.$error" ng-if='signupForm.username.$dirty'>
                                   <div ng-message="required">Enter your e-mail address to login</div>
@@ -92,7 +92,7 @@
                               </md-input-container>
                               <md-input-container class="md-icon-float">
                                 <label>Password</label>
-                                <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon> 
+                                <md-icon md-font-icon="fa-key" class="fa"></md-icon> 
                                 <input name="password" type="password" required ng-model="signup.password">
                                 <div ng-messages="signupForm.password.$error" ng-if='signupForm.password.$dirty'>
                                   <div ng-message="required">Choose a password to use for playchaser</div>
@@ -100,7 +100,7 @@
                               </md-input-container>
                               <md-input-container class="md-icon-float">
                                 <label>Password</label>
-                                <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon>
+                                <md-icon md-font-icon="fa-key" class="fa"></md-icon>
                                 <input name="repeatPassword" type="password" required ng-model="signup.repeatPassword">
                                 <div ng-messages="signupForm.repeatPassword.$error" ng-if='signupForm.repeatPassword.$dirty'>
                                   <div ng-message="required">Confirm your password by entering it again</div>
@@ -108,7 +108,7 @@
                                 </div>
                               </md-input-container>
                               <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="signupForm.$invalid" layout="row" layout-align="center center">
-                                <md-icon md-font-icon="fa-forward" class="fa fa-lg"></md-icon>
+                                <md-icon md-font-icon="fa-forward" class="fa"></md-icon>
                                <span>Create Account</span>
                              </md-button>
                             </form>
@@ -122,7 +122,7 @@
         <script src="lib/angular-1.3.16/angular-animate.min.js"></script>
         <script src="lib/angular-1.3.16/angular-aria.min.js"></script>
         <script src="lib/angular-1.3.16/angular-messages.min.js"></script>
-        <script src="lib/angular-material-0.9.8-rc1/angular-material.min.js"></script>
+        <script src="lib/angular-material-0.9.8/angular-material.min.js"></script>
             
         <!-- build:js js/login.min.js -->
         <script src="js/login.js"></script>
