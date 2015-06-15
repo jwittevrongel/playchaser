@@ -74,3 +74,19 @@ module.exports = function(req, res, next) {
     }
     return next(); 
 };
+
+module.exports.doLogin = function(req, res, next) {
+	passport.authenticate('local', function(err, user) {
+        if (err) {
+			delete req.session.passport;						  
+			return res.status(401).end();
+		}
+		req.logIn(user, function(err) {
+			if (err) {
+				delete req.session.passport;						  
+				return res.status(401).end();
+			}
+			return res.status(200).send({ href: '/' }).end();
+		});
+	})(req, res, next);
+};

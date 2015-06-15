@@ -29,7 +29,8 @@ gulp.task('all-jshint', function() {
     	.pipe(jshint.reporter('fail'));
 });
 
-var lessSources = ['client/css/*.less', '!client/css/_*.less'];
+var lessSourcesAll = ['client/css/*.less'];
+var lessSources = lessSourcesAll.concat('!client/css/_*.less');
 gulp.task('client-less', ['client-copy'], function() {
 	var collectionFiles = gulp.src('bld/*.manifest.json');
 	var lessTask = gulp.src(lessSources, { base: 'client' })
@@ -156,7 +157,7 @@ gulp.task('client-test');
 
 gulp.task('watch', function() {
 	gulp.watch(allJavascriptSources, ['all-jshint']);
-	gulp.watch(lessSources, ['client-less']);
+	gulp.watch(lessSourcesAll, ['client-less']);
 	gulp.watch(clientFilesToCopy, ['client-copy']);
 	gulp.watch([clientMainHtml, clientManifestFiles], ['client-html-watched']);
 	gulp.watch(clientIndexJsFiles, ['client-index-js']);

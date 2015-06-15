@@ -43,7 +43,7 @@
 		})
 		.directive('pcGameList', function() {
 			return {
-				templateUrl: 'js/gameList.html',
+				templateUrl: 'js/core/gameList.html',
 				scope: {
 					gameList: '=pcGameList'
 				}

@@ -4,7 +4,7 @@
 	angular.module("playchaser.index")
 		.config(function($routeProvider) {
 			$routeProvider.otherwise({
-				templateUrl: 'js/home.html',
+				templateUrl: 'js/core/home.html',
 				controller: 'pcHomeCtrl'
 			});
 		});

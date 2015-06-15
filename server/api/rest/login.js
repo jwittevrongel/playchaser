@@ -1,10 +1,8 @@
 "use strict";
 
-var passport = require('passport');
-
+var auth = require('../../services/auth');
+ 
 exports.configureRoutes = function(app) {
 	app.route('/login')
-		.post(passport.authenticate('local'), function(req, res) {
-            res.status(200).send({ href: '/' });
-        });
+		.post(auth.doLogin);
 };

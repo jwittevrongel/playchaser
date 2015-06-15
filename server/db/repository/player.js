@@ -27,6 +27,9 @@ var Promise = require('bluebird'),
 var PlayerRepository = repository.generateMongoRepository(SCHEMA, COLLECTION, INDEXES);
 
 function hydrateIdentity(player) {
+	if (!player) {
+		return player;
+	}
 	return repository.hydrateOne(identityDomain.create, Promise.resolve(player.identity))
 		.then(function(identity){
 			player.identity = identity;

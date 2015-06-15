@@ -36,6 +36,9 @@
                         <div layout="row" layout-align="center start">
                         <md-content layout="column" layout-padding flex="100" flex-gt-md="66" flex-gt-lg="50">
                             <h4>Sign in with your e-mail address and password to get started</h4>
+                            <div ng-messages="errors.page" class="pageErrors md-warn">
+                                <div ng-message="sessionTimeout">Your session has timed out. Please sign in again.</div>
+                            </div>
                             <form name="loginForm" autocomplete="on" novalidate ng-submit="doLogin(login)">
                               <md-input-container class="md-icon-float">
                                 <label>E-mail address</label>
@@ -52,6 +55,10 @@
                                 <input name="password" type="password" required ng-model="login.password">
                                 <div ng-messages="loginForm.password.$error" ng-if='loginForm.password.$dirty'>
                                   <div ng-message="required">Enter your password to login</div>
+                                </div>
+                                <div ng-messages="errors.login" ng-if='loginForm.password.$valid'>
+                                  <div ng-message="invalidLogin">Sign in failed: e-mail address and password do not match</div>
+                                  <div ng-message="serverFailure">Sign in failed: the playchaser server is experiencing difficulties</div>
                                 </div>
                               </md-input-container>
                               <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="loginForm.$invalid" layout="row" layout-align="center center">
@@ -74,20 +81,26 @@
                               <md-input-container class="md-icon-float">
                                 <label>Moniker</label>
                                 <md-icon md-svg-icon="meeple"></md-icon>
-                                <input name="moniker" required ng-model="signup.moniker" ng-model-options="{ debounce : { 'default' : 500, blur : 0 } }">
+                                <input name="moniker" required ng-model="signup.moniker" ng-model-options="{ debounce : { 'default' : 500, blur : 0 } }" pc-check-user-available="moniker">
                                 <div ng-messages="signupForm.moniker.$error" ng-if='signupForm.moniker.$dirty'>
                                   <div ng-message="required">Choose a moniker to display as your identity to other players</div>
-                                  <div ng-message="inuse">That moniker is already in use; choose another</div>
+                                  <div ng-message="pcCheckUserAvailable">That moniker is already in use; choose another</div>
+                                </div>
+                                <div ng-messages="errors.signup" ng-if='signupForm.moniker.$valid'>
+                                    <div ng-message="monikerinuse">That moniker is already in use; choose another</div>
                                 </div>
                               </md-input-container>
                               <md-input-container class="md-icon-float">
                                 <label>E-mail address</label>
                                 <md-icon md-font-icon="fa-envelope" class="fa"></md-icon> 
-                                <input name="username" type="email" required autofocus ng-model="signup.username" ng-model-options="{updateOn: 'blur', debounce : { 'default' : 500, blur : 0 } }">
+                                <input name="username" type="email" required autofocus ng-model="signup.username" ng-model-options="{updateOn: 'blur', debounce : { 'default' : 500, blur : 0 } }" pc-check-user-available="username">
                                 <div ng-messages="signupForm.username.$error" ng-if='signupForm.username.$dirty'>
                                   <div ng-message="required">Enter your e-mail address to login</div>
                                   <div ng-message="email">Enter a valid e-mail address</div>
-                                  <div ng-message="inuse">That e-mail address is already registered</div>
+                                  <div ng-message="pcCheckUserAvailable">That e-mail address is already registered</div>
+                                </div>
+                                <div ng-messages="errors.signup" ng-if='signupForm.username.$valid'>
+                                    <div ng-message="emailinuse">That e-mail address is already in use; choose another</div>
                                 </div>
                               </md-input-container>
                               <md-input-container class="md-icon-float">
@@ -99,12 +112,15 @@
                                 </div>
                               </md-input-container>
                               <md-input-container class="md-icon-float">
-                                <label>Password</label>
+                                <label>Confirm Password</label>
                                 <md-icon md-font-icon="fa-key" class="fa"></md-icon>
-                                <input name="repeatPassword" type="password" required ng-model="signup.repeatPassword">
+                                <input name="repeatPassword" type="password" required ng-model="signup.repeatPassword" pc-must-equal="signup.password">
                                 <div ng-messages="signupForm.repeatPassword.$error" ng-if='signupForm.repeatPassword.$dirty'>
                                   <div ng-message="required">Confirm your password by entering it again</div>
-                                  <div ng-message="notequal">Passwords do not match</div>
+                                  <div ng-message="pcMustEqual">Passwords do not match</div>
+                                </div>
+                                <div ng-messages="errors.signup" ng-if='signupForm.repeatPassword.$valid'>
+                                  <div ng-message="serverFailure">Sign up failed: the playchaser server is experiencing difficulties</div>
                                 </div>
                               </md-input-container>
                               <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="signupForm.$invalid" layout="row" layout-align="center center">

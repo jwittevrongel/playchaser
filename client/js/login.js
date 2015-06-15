@@ -1,45 +1,51 @@
 (function(angular) {
 	"use strict";
+	
 	angular.module('playchaser.login', ['playchaser.environment', 'playchaser', 'ngMaterial', 'ngMessages'])
-		.directive('pcValidateEqual', function() {
+		.directive('pcMustEqual', function() {
 			return {
 				restrict: 'A',
 				require: 'ngModel',
 				link: function($scope, $element, $attrs, ngModelCtrl) {
-					$scope.$watch($attrs.pcValidateEqual, function(newValue) {
+					$scope.$watch($attrs.pcMustEqual, function(newValue) {
 						if (angular.isDefined(ngModelCtrl.$viewValue) && ngModelCtrl.$viewValue.length) {
-							ngModelCtrl.$setValidity('pcValidateEqual', newValue === ngModelCtrl.$viewValue);
+							ngModelCtrl.$setValidity('pcMustEqual', newValue === ngModelCtrl.$viewValue); 
 						}
 					});
 					
-					ngModelCtrl.$validators.pcValidateEqual = function(newValue) {
+					ngModelCtrl.$validators.pcMustEqual = function(newValue) {
 						if (!(angular.isDefined(newValue) && newValue.length)) {
 							return true;
 						}
-						return (newValue === $scope.$eval($attrs.pcValidateEqual));
+						return (newValue === $scope.$eval($attrs.pcMustEqual));
 					};
 				}
 			};
 		})
 
-		.directive('pcUserAvailable', function($http, $q, pcEnvironment) {
+		.directive('pcCheckUserAvailable', function($http, $q, pcEnvironment) {
 			return {
 				restrict: 'A',
 				require: 'ngModel',
 				link: function($scope, $element, $attrs, ngModelCtrl) {
-					ngModelCtrl.$asyncValidators.userAvailable = function(val) {
+					ngModelCtrl.$asyncValidators.pcCheckUserAvailable = function(val) {
 						var deferred = $q.defer();
 						var config = {
 							params: {
 								exists: 1
 							}
 						};
-						config.params[$attrs.pcUserAvailable] = val;
+						config.params[$attrs.pcCheckUserAvailable] = val;
 						$http.get(pcEnvironment.site.restRoot + 'players', config).success(function() { 
 								deferred.reject(false); 
 							})
-							.error(function() { 
-								deferred.resolve(true); 
+							.error(function(data, status) {
+								if (status === 404) { // 404 means the moniker or email doesn't exist
+								    deferred.resolve(true);
+								}
+								else {
+									deferred.reject(false);
+								} 
 							});
 
 						return deferred.promise;
@@ -49,28 +55,39 @@
 		})
 
 		.controller('pcLoginCtrl', function($scope, $http, $window, $location, pcEnvironment) {
-			$scope.errorMessages = {};
+			$scope.errors = {
+				page: {},
+				login: {},
+				signup: {}	
+			};
+			
 			if ($location.path() === '/timeout') {
-				$scope.errorMessages.login = "Your playchaser session timed out. Please log in again.";
+				$scope.errors.page.sessionTimeout = true;
 			}
+			
 			$scope.doLogin = function(login) {
-				$scope.errorMessages.login = "";
+				$scope.errors.page = {};
+				$scope.errors.login = {}; 
 				$http.post(pcEnvironment.site.restRoot + 'login', login).success(function(data) {
 					$window.location.href = data.href;
-				}).error(function() {
-					$scope.errorMessages.login = "Invalid username or password. Please try again.";
+				}).error(function(data, status) {
+					if (status === 401) {
+						$scope.errors.login.invalidLogin = true;
+					}
+					$scope.errors.login.serverFailure = true; 
 				});
 			};
 
 			$scope.doSignup = function (signup) {
-				$scope.errorMessages.signup = "";
+				$scope.errors.page = {};
+				$scope.errors.signup = {}; 
 				$http.post(pcEnvironment.site.restRoot + 'players', signup).success(function(data) {
 					$window.location.href = data.href;
 				}).error(function(data) {
-					if (data.message) {
-						$scope.errorMessages.signup = data.message;
+					if (data.err) {
+						$scope.errors.signup[data.err] = true;
 					} else {
-						$scope.errorMessages.signup = "An unknown error occurred.  Please try again.";
+						$scope.errors.signup.serverFailure = true;
 					}
 				});
 			};

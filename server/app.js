@@ -30,6 +30,10 @@ if ('development' == app.get('env')) {
 	app.use(express.static(path.join(__dirname, '..', 'static')));
 }
 
+// define routes that don't need a session here...
+restApi.configureAnonymousRoutes(app);
+config.clientEnvironment.configureAnonymousRoutes(app);
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({strict: false}));
 
@@ -42,8 +46,8 @@ var expressSession = session({
 		maxAge: config.session.timeout
 	},
 	store: new RedisStore(config.db.redis.session),
-	resave: true,
-	saveUninitialized: true
+	resave: false,
+	saveUninitialized: false
 });
 var passportInit = passport.initialize();
 var passportSession = passport.session();
@@ -72,7 +76,6 @@ var server = http.Server(app);
 
 // routes
 restApi.configureRoutes(app);
-config.clientEnvironment.configureRoutes(app);
 
 // gameEngine.configureRoutes(app);
 // wsServer.route('foo');

@@ -1,6 +1,6 @@
 (function(angular) {
 	"use strict";
-	angular.module('playchaser')
+	angular.module('playchaser.session', [])
 		.service('pcSession', function($window) {
 			return {
 				end: function(reason) {

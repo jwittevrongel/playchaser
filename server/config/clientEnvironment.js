@@ -1,6 +1,6 @@
 "use strict";
 
-exports.configureRoutes = function(app) {
+exports.configureAnonymousRoutes = function(app) {
 	app.route('/js/environment.js').get(function(req, res) {
 		var connectionIsEncrypted = req.connection.encrypted || req.get('X-Forwarded-Proto') === 'https';
 		var urlSuffix = (connectionIsEncrypted ? 's' : '') + '://' + req.headers.host + '/';
