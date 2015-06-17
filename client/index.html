@@ -16,23 +16,31 @@
         <link rel="stylesheet" href="css/index.css">
         <!-- /build -->
     </head>
-    <body ng-controller="pcMainCtrl">
-        <div class="all-content">
-            <div class="header">
-                <h1 class="masthead"><a href="#/home"><span class="playchaser-logo"></span>Playchaser</a></h1>
-                <div class="settings-menu"><a ng-click="showSettingsMenu()">
-                    <span class="settings-menu-entry"></span>
-                </a></div>
-                <div class="player-menu"><a ng-click="showPlayerMenu()">
-                    <span class="player-menu-entry"><span class="player-username">&nbsp;{{ player.username }}</span></span>
-                </a></div>
-                <div class="mobile-menu"><a ng-click="showMobileMenu()">
-                    <span class="mobile-menu-entry"></span>
-                </a></div>
+    <body ng-controller="pcMainCtrl" layout="column">
+        
+        <md-toolbar>
+            <div class="md-toolbar-tools masthead" layout="row">
+              <md-icon md-svg-icon="playchaser"></md-icon>
+              <h1 flex>Welcome to Playchaser</h1>
+                 <md-menu>
+                 <md-button ng-click="$mdOpenMenu()" class="md-fab" aria-label="My Account">
+                   <md-icon md-svg-icon="meeple"></md-icon>
+                 </md-button>
+                 <md-menu-content width="6" id="accountMenu">
+                    <md-content layout="column">
+                        <md-toolbar layout="row" layout-padding><md-icon md-svg-icon="meeple"></md-icon><h3 flex>{{ player.profile.public.moniker }}</h3></md-toolbar>
+                    </md-content>
+                    <md-menu-item>
+                        <md-button ng-click="player.signOut()">Sign out</md-button>
+                    </md-menu-item>
+                 </md-menu-content>
+                </md-menu>
             </div>
-            <div class="body" ng-view>
-            </div>
-        </div>
+        </md-toolbar>
+        <md-content layout-padding layout="column">
+            
+        </md-content>
+        
         <script src="lib/angular-1.4.0/angular.min.js"></script>
         <script src="lib/angular-1.4.0/angular-route.min.js"></script>
         <script src="lib/angular-1.4.0/angular-resource.min.js"></script>

@@ -1,23 +1,11 @@
 (function(angular) {
 	"use strict";
-	angular.module('playchaser.session', [])
-		.service('pcSession', function($window) {
-			return {
-				end: function(reason) {
-					var location = '/login.html';
-					if (reason) {
-						location += '#/' + reason;
-					}
-					$window.document.cookie = 'pc.sess=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-					$window.location = location;
-				}
-			};
-		})
-		.service('redirectToLoginWhenUnauthorized', function($q, pcSession) {
+	angular.module('playchaser.session', ['playchaser'])
+		.service('redirectToLoginWhenUnauthorized', function($q, pcPlayerSession) {
 			return {
 				responseError: function(rejection) {
 					if (rejection.status === 401) {
-						pcSession.end('timeout');
+						pcPlayerSession.end('timeout');
 					}
 					return $q.reject(rejection);
 				}	
