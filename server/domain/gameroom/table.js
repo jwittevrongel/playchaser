@@ -10,6 +10,9 @@ function Table(owner, rulebook) {
 	if (this.owner) {
 		this.seats.push(this.owner);
 	}
+	if (this.rulebook) {
+		this.participants = _.extend({}, this.rulebook.participants);
+	}
 }
 
 Table.prototype.join = function(player) {
