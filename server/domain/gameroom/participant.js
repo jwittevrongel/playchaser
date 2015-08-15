@@ -1,16 +1,18 @@
 "use strict";
 
-function Participant(player) {
-	this._id = player._id;
-	this.profile = {
-		public: player.profile.public
-	};
+function Participant(playerOrParticipant) {
+	this._id = playerOrParticipant._id;
+	if (playerOrParticipant.profile) {
+		this.profile = { public : playerOrParticipant.profile.public };
+	} else {
+		this.profile = { public: { } };
+	}
 }
 
 Participant.prototype.equals = function(otherParticipant) {
 	return (this._id == otherParticipant._id);	
 };
 
-exports.adaptFromPlayer = function(player) {
-	return new Participant(player);	
+exports.create = function(playerOrParticipant) {
+	return new Participant(playerOrParticipant);	
 };

@@ -23,13 +23,7 @@ exports.hydrateMany = function(proto, promise) {
 	});	
 };
 
-exports.generateMongoRepository = function(schemaName, collectionName, indexes) {
-	function MongoRepository(db) {
-		this._db = db;
-		this._collection = db.collection(collectionName);
-	}
-	MongoRepository.schemaName = schemaName;
-	MongoRepository.collectionName = collectionName;
+function extendMongoRepository(MongoRepository, indexes) {
 	
 	if (indexes) {
 		MongoRepository.prototype.initializeIndices = function() {
@@ -47,10 +41,21 @@ exports.generateMongoRepository = function(schemaName, collectionName, indexes) 
 		};
 	}
 	
+	return MongoRepository;
+}
+
+exports.generateMongoRepository = function(schemaName, collectionName, indexes) {
+	function MongoRepository(db) {
+		this._db = db;
+		this._collection = db.collection(collectionName);
+	}
+	
+	MongoRepository.schemaName = schemaName;
+	MongoRepository.collectionName = collectionName;
 	MongoRepository.prototype.hydrateOne = exports.hydrateOne;
 	MongoRepository.prototype.hydrateMany = exports.hydrateMany;
 	
-	return MongoRepository;
+	return extendMongoRepository(MongoRepository, indexes);
 };
 
 exports.generateMongoExports = function(MongoRepository) {
@@ -63,14 +68,8 @@ exports.generateMongoExports = function(MongoRepository) {
 	};
 };
 
-exports.generateRedisRepository = function(schemaName, collectionName) {
+function extendRedisRepository(RedisRepository, collectionName) {
 	var _nextIdKey = "_sequence:" + collectionName;
-	function RedisRepository(publisher, subscriber) {
-		this._publisher = publisher;
-		this._subscriber = subscriber;
-	}
-	RedisRepository.schemaName = schemaName;
-	RedisRepository.collectionName = collectionName;
 	
 	RedisRepository.prototype.canSubscribe = function canSubscribe() {
 		return !!this._subscriber;
@@ -91,10 +90,22 @@ exports.generateRedisRepository = function(schemaName, collectionName) {
 		return this._publisher.incrAsync(_nextIdKey);
 	};
 	
+	return RedisRepository;
+}
+
+exports.generateRedisRepository = function(schemaName, collectionName) {
+	
+	function RedisRepository(publisher, subscriber) {
+		this._publisher = publisher;
+		this._subscriber = subscriber;
+	}
+	
+	RedisRepository.schemaName = schemaName;
+	RedisRepository.collectionName = collectionName;
 	RedisRepository.prototype.hydrateOne = exports.hydrateOne;
 	RedisRepository.prototype.hydrateMany = exports.hydrateMany;
 	
-	return RedisRepository;
+	return extendRedisRepository(RedisRepository, collectionName);
 };
 
 exports.generateRedisExports = function(RedisRepository) {
@@ -104,6 +115,33 @@ exports.generateRedisExports = function(RedisRepository) {
 		},
 		schemaName: RedisRepository.schemaName,
 		collectionName: RedisRepository.collectionName	
+	};
+};
+
+exports.generateHybridRepository = function(schemaName, collectionName, indexes) {
+	
+	function HybridRepository(mongo, redisPublisher, redisSubscriber) {
+		this._db = mongo;
+		this._collection = mongo.collection(collectionName);
+		this._publisher = redisPublisher;
+		this._subscriber = redisSubscriber;
+	}
+	
+	HybridRepository.schemaName = schemaName;
+	HybridRepository.collectionName = collectionName;
+	HybridRepository.prototype.hydrateOne = exports.hydrateOne;
+	HybridRepository.prototype.hydrateMany = exports.hydrateMany;
+	
+	return extendMongoRepository(extendRedisRepository(HybridRepository, collectionName), indexes);
+};
+
+exports.generateHybridExports = function(HybridRepository) {
+	return {
+		open: function open(mongo, redisPublisher, redisSubscriber) {
+			return new HybridRepository(mongo, redisPublisher, redisSubscriber);
+		},
+		schemaName: HybridRepository.schemaName,
+		collectionName: HybridRepository.collectionName	
 	};
 };
 

@@ -4,11 +4,11 @@ var participant = require('./participant'),
     _ = require('lodash');
 
 function Table(owner, rulebook) {
-	this.owner = participant.adaptFromPlayer(owner);
+	this.owner = participant.create(owner);
 	this.rulebook = rulebook;
 	this.seats = [];
 	if (this.owner) {
-		this.seats.push(this.owner);
+		this.join(this.owner);
 	}
 	if (this.rulebook) {
 		this.participants = _.extend({}, this.rulebook.participants);
@@ -22,7 +22,7 @@ Table.prototype.join = function(player) {
 	if (!this.hasOpenSeats()) {
 		throw new Error("no open seats");
 	}
-	var joiner = participant.adaptFromPlayer(player);
+	var joiner = participant.create(player);
 	if (!_.find(this.seats, joiner.equals, joiner)) {
 		this.seats.push(joiner);
 	}
@@ -36,7 +36,7 @@ Table.prototype.leave = function(player) {
 	if (!player) {
 		throw new Error("player not provided");
 	}
-	var leaver = participant.adaptFromPlayer(player);
+	var leaver = participant.create(player);
 	
 	if (leaver.equals(this.owner)) {
 		throw new Error("owner cannot leave the table");
