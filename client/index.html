@@ -38,7 +38,18 @@
             </div>
         </md-toolbar>
         <md-content layout-padding layout="column">
-            
+            <md-card flex="50">
+                <md-card-content>
+                    <h2 class="md-title">My Games</h2>
+                    <div pc-table-list="gameroom.tables.participating"></div>
+                </md-card-content>
+            </md-card>
+            <md-card flex="50">
+                <md-card-content>
+                    <h2 class="md-title">All open Games</h2>
+                    <div pc-table-list="gameroom.tables.allopen"></div>
+                </md-card-content>
+            </md-card>
         </md-content>
         
         <script src="lib/angular-1.4.6/angular.min.js"></script>
@@ -56,8 +67,7 @@
         
         <!-- build:js js/playchaser.min.js -->
         <script src="js/core/module.js"></script>
-        <script src="js/core/home.js"></script>
-        <script src="js/core/game.js"></script>
+        <script src="js/core/gameroom.js"></script>
         <script src="js/core/player.js"></script>
         <script src="js/core/iconregistry.js"></script>
         <script src="js/core/util/websocket.js"></script>

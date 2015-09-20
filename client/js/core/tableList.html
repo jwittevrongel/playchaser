@@ -1,0 +1,14 @@
+
+<ul class="pc-tablelist">
+	<li ng-repeat='table in tableList'>
+		<div class="table-title">{{ ::table._id }}</div>
+		<div class="table-playercount" ng-pluralize count="::table.participants.length" when="{'one': '1 player', 'other': '{} players'}"></div>
+		<div class="table-actions">
+			<button ng-click="table.join()" ng-show="table.canBeJoined">Join table</button>
+			<button ng-click="table.start()" ng-show="table.canBeStarted">Start table</button>
+		</div>
+		<ul class="table-playerlist">
+			<li ng-repeat='participant in ::table.participants'>{{ ::participant.player.username }}</li> <!-- also consider participant.name for when a table is started -->
+		</ul>
+	</li>
+</ul>

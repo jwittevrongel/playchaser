@@ -29,6 +29,13 @@ Rulebook.prototype.findById = function(id) {
 	}));
 };
 
+Rulebook.prototype.findAll = function() {
+	var self = this;
+	return this._collection.findAsync().then(function(cursor) {
+		return self.hydrateMany(rulebook.create, cursor.toArrayAsync());
+	});
+};
+
 module.exports = repository.generateMongoExports(Rulebook);
 
 
