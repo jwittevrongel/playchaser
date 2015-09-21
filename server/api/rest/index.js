@@ -17,7 +17,9 @@ function configure(functionName, app) {
 }
 
 ['configureRoutes', 'configureAnonymousRoutes'].forEach(function(functionName) {
-	module.exports[functionName] = function(app) {
+	exports[functionName] = function(app) {
 		return configure(functionName, app);
 	};
 });
+
+

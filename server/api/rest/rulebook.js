@@ -1,17 +1,15 @@
 "use strict";
 
 var rulebookResource = require('../resources/rulebook'),
-	HttpStatus = require('http-status-codes');
+    rest = require('./rest');
 
 exports.configureRoutes = function(app) {
+    app.route('/rulebooks/:id')
+        .get(function(req, res) {
+            return rest.wrapResourceJson(res, rulebookResource.get(req.params.id));
+        });
 	app.route('/rulebooks')
 		.get(function(req, res) {
-			return rulebookResource.getAll()
-                .then(function(result) {
-                   return res.status(result.status).json(result.value); 
-                })
-                .catch(function(e) {
-                   return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e); 
-                });
+            return rest.wrapResourceJson(res, rulebookResource.getAll());
 		});
 };

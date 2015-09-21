@@ -7,7 +7,8 @@ var _ = require('lodash'),
 	playerRepository = require('../../db/repository/player'),
 	connection = require('../../db/connection'),
 	player = require('../../domain/player'),
-	identity = require('../../domain/player/identity');
+	identity = require('../../domain/player/identity'),
+	resource = require('./');
 
 var presenters = {
 	publicProfile: function(player) {
@@ -92,7 +93,7 @@ exports.postPlayers = function(newPlayerRequest) {
 	return Promise.using(connection.connectToPlayerDatabase(), function(db) {
 		var repos = playerRepository.open(db);
 		var newIdentity;
-		return identity.createPlaychaserIdentity(newPlayerRequest.username, newPlayerRequest.password)
+		return resource.created(identity.createPlaychaserIdentity(newPlayerRequest.username, newPlayerRequest.password)
 			.then(function(id) {
 				newIdentity = id;
 				return repos.loadSingleByIdentity(id);
@@ -120,10 +121,7 @@ exports.postPlayers = function(newPlayerRequest) {
 				var newPlayer = player.createPlayer(newIdentity);
 				newPlayer.profile.public.moniker = newPlayerRequest.moniker;
 				return repos.save(newPlayer);
-			})
-			.then(function(newPlayer) {
-				return { status: HttpStatus.CREATED, value: presenters.entirePlayer(newPlayer) };
-			});
+			}));
 	});
 };
 
