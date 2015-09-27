@@ -110,8 +110,8 @@ exports.generateRedisRepository = function(schemaName, collectionName) {
 
 exports.generateRedisExports = function(RedisRepository) {
 	return {
-		open: function open(publisher, subscriber) {
-			return new RedisRepository(publisher, subscriber);
+		open: function open(db) {
+			return new RedisRepository(db.publisher, db.subscriber);
 		},
 		schemaName: RedisRepository.schemaName,
 		collectionName: RedisRepository.collectionName	
@@ -137,8 +137,8 @@ exports.generateHybridRepository = function(schemaName, collectionName, indexes)
 
 exports.generateHybridExports = function(HybridRepository) {
 	return {
-		open: function open(mongo, redisPublisher, redisSubscriber) {
-			return new HybridRepository(mongo, redisPublisher, redisSubscriber);
+		open: function open(db) {
+			return new HybridRepository(db.mongo, db.redis.publisher, db.redis.subscriber);
 		},
 		schemaName: HybridRepository.schemaName,
 		collectionName: HybridRepository.collectionName	

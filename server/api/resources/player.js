@@ -2,6 +2,7 @@
 
 var _ = require('lodash'),
     ResourceError = require('./error'),
+	ResourceResult = require('./result'),
 	Promise = require('bluebird'),
 	HttpStatus = require('http-status-codes'),
 	playerRepository = require('../../db/repository/player'),
@@ -25,8 +26,8 @@ var presenters = {
 	}
 };
 
-exports.getPlayersMe = function(httpContext) {
-	return Promise.resolve({ status: HttpStatus.OK, value: presenters.entirePlayer(httpContext.user) });
+exports.getPlayersMe = function(me) {
+	return Promise.resolve({ status: HttpStatus.OK, value: presenters.entirePlayer(me) });
 };
 
 exports.getPlayers = function(getPlayersQueryParams) {
@@ -37,9 +38,9 @@ exports.getPlayers = function(getPlayersQueryParams) {
 				return repos.loadSingleByMoniker(getPlayersQueryParams.moniker)
 					.then(function(player) {
 						if (player) {
-							return { status: HttpStatus.OK, value: {}};
+							return new ResourceResult(HttpStatus.OK, {});
 						}
-						return { status: HttpStatus.NOT_FOUND, value: {}};
+						return new ResourceResult(HttpStatus.NOT_FOUND, {});
 					});
 			});
 		}
@@ -53,16 +54,16 @@ exports.getPlayers = function(getPlayersQueryParams) {
 					})
 					.then(function(player) {
 						if (player) {
-							return { status: HttpStatus.OK, value: {}};
+							return new ResourceResult(HttpStatus.OK, {});
 						}
-						return { status: HttpStatus.NOT_FOUND, value: {}};
+						return new ResourceResult(HttpStatus.NOT_FOUND, {});
 					});
 			});
 		}
-        return Promise.resolve({ status: HttpStatus.BAD_REQUEST, value: {}});
+        return Promise.resolve(new ResourceResult(HttpStatus.BAD_REQUEST, {}));
     }
     else {
-        return Promise.resolve({ status: HttpStatus.FORBIDDEN, value: {}});
+        return Promise.resolve(new ResourceResult(HttpStatus.FORBIDDEN, {}));
     }
 };
 

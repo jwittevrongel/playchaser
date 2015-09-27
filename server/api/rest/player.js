@@ -24,7 +24,7 @@ exports.configureRoutes = function(app) {
         
 	app.route('/players/me')
         .get(function(req, res) {
-            return rest.wrapResourceJson(res, playerResource.getPlayersMe(req));
+            return rest.wrapResourceJson(res, playerResource.getPlayersMe(req.user));
         });
 };
 

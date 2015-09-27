@@ -22,11 +22,20 @@
                 "host": "localhost",
                 "port": 6379,
                 "canSubscribe": false
-            },
+            }
+        },
+        "hybrid":{
             "gameRoom": {
-                "host": "localhost",
-                "port": 6379,
-                "canSubscribe": true
+                "redis": {
+                    "host": "localhost",
+                    "port": 6379,
+                    "canSubscribe": true
+                },
+                "mongo": {
+                    "connectionString": "mongodb://localhost/playchaser",
+                    "options": {
+                    }
+                }
             }
         }
     },

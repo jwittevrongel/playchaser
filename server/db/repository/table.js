@@ -66,12 +66,13 @@ TableRepository.prototype.update = function(table) {
 
 TableRepository.prototype.create = function(table) {
 	table._rev = 1;
-	return this._collection.insertOne(table).then(function(inserted) {
+	var self = this;
+	return self._collection.insertOneAsync(table).then(function(inserted) {
 		var baseRedisKey = 'tables:' + table.rulebook._id;
 		var openSeatsKey = baseRedisKey + ':open';
 		table._id = inserted.ops[0]._id;
 		var hexId = table._id.toHexString();
-		return this._publisher.multi()
+		return self._publisher.multi()
 			.sadd(baseRedisKey, hexId)
 			.sadd(openSeatsKey, hexId)
 			.execAsync()

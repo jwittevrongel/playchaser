@@ -5,14 +5,14 @@ var rulebookRepository = require('../../db/repository/rulebook'),
     connection = require('../../db/connection'),
 	resource = require('./');
 
-exports.getAll = function() {
+exports.getRulebooks = function() {
 	return Promise.using(connection.connectToGameLibraryDatabase(), function(db) {
 		var repos = rulebookRepository.open(db);
 		return resource.ok(repos.findAll());
 	});
 };
 
-exports.get = function(id) {
+exports.getRulebook = function(id) {
 	return Promise.using(connection.connectToGameLibraryDatabase(), function(db) {
 		var repos = rulebookRepository.open(db);
 		return resource.ok(repos.findById(id));

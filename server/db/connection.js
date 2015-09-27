@@ -71,6 +71,21 @@ function openRedisConnection(schemaName, db) {
 	return openDatabaseConnection(schemaName, db, redisConnector, redisCloser);
 }
 
+function hybridConnector(db) {
+	return Promise.join(redisConnector(db.redis), mongoConnector(db.mongo), function(rdb, mdb){
+		return { redis: rdb, mongo: mdb };
+	});
+}
+
+function hybridCloser(connection) {
+	redisCloser(connection.redis);
+	mongoCloser(connection.mongo);
+}
+
+function openHybridConnection(schemaName, db) {
+	return openDatabaseConnection(schemaName, db, hybridConnector, hybridCloser);
+}
+
 exports.connectToMongoDatabase = function(schemaName) {
 	return openMongoConnection(schemaName, config.db.mongo[schemaName]);
 };
@@ -91,7 +106,11 @@ exports.connectToRedisDatabase = function(schemaName) {
 	return openRedisConnection(schemaName, config.db.redis[schemaName]);
 };
 
+exports.connectToHybridDatabase = function(schemaName) {
+	return openHybridConnection(schemaName, config.db.hybrid[schemaName]);
+};
+
 exports.connectToGameRoomDatabase = function() {
-	return exports.connectToRedisDatabase('gameRoom');
+	return exports.connectToHybridDatabase('gameRoom');
 };
 
