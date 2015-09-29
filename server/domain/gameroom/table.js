@@ -5,13 +5,10 @@ var participant = require('./participant'),
 
 function Table(owner, rulebook) {
 	this.owner = participant.create(owner);
-	this.rulebook = { _id: rulebook._id, name: rulebook.name };
+	this.rulebook = rulebook;
 	this.seats = [];
 	if (this.owner) {
 		this.join(this.owner);
-	}
-	if (this.rulebook) {
-		this.participants = _.extend({}, this.rulebook.participants);
 	}
 }
 

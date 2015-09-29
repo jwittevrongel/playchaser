@@ -37,19 +37,21 @@
                 </md-menu>
             </div>
         </md-toolbar>
-        <md-content layout-padding layout="column">
-            <md-card flex="50">
-                <md-card-content>
-                    <h2 class="md-title">My Games</h2>
-                    <div pc-table-list="gameroom.tables.participating"></div>
-                </md-card-content>
-            </md-card>
-            <md-card flex="50">
-                <md-card-content>
-                    <h2 class="md-title">All open Games</h2>
-                    <div pc-table-list="gameroom.tables.allopen"></div>
-                </md-card-content>
-            </md-card>
+        <md-content layout="column">
+            <div layout="row">
+                <md-card flex>
+                    <md-card-content>
+                        <h2 class="md-title">My Games</h2>
+                        <div pc-table-list="gameroom.tables.participating"></div>
+                    </md-card-content>
+                </md-card>
+                <md-card flex>
+                    <md-card-content>
+                        <h2 class="md-title">All open Games</h2>
+                        <div pc-table-list="gameroom.tables.allopen"></div>
+                    </md-card-content>
+                </md-card>
+            </div>
             <md-button ng-click="createGame('tic-tac-toe')">New Tic Tac Toe</md-button>
         </md-content>
         
