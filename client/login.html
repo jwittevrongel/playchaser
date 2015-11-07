@@ -34,34 +34,34 @@
                     <md-tab-label>Get Chasing!</md-tab-label>
                     <md-tab-body>
                         <div layout="row" layout-align="center start">
-                        <md-content layout="column" layout-padding flex="100" flex-gt-md="66" flex-gt-lg="50">
+                        <md-content layout="column" layout-padding flex="100" flex-gt-md="66" flex-gt-lg="50" class="md-inline-form">
                             <h4>Sign in with your e-mail address and password to get started</h4>
                             <div ng-messages="errors.page" class="pageErrors md-warn">
                                 <div ng-message="sessionTimeout">Your session has timed out. Please sign in again.</div>
                             </div>
-                            <form name="loginForm" autocomplete="on" novalidate ng-submit="doLogin(login)">
-                              <md-input-container class="md-icon-float">
+                            <form name="loginForm" autocomplete="on" novalidate ng-submit="doLogin(login)" layout="column">
+                              <md-input-container md-no-float class="md-block">
                                 <label>E-mail address</label>
                                 <md-icon md-font-icon="fa-envelope" class="fa"></md-icon> 
                                 <input name="username" type="email" required autofocus ng-model="login.username" ng-model-options="{updateOn: 'blur'}">
                                 <div ng-messages="loginForm.username.$error" ng-if='loginForm.username.$dirty'>
-                                  <div ng-message="required">Enter your e-mail address to login</div>
+                                  <div ng-message="required">Enter your e-mail address to sign in</div>
                                   <div ng-message="email">Enter a valid e-mail address</div>
                                 </div>
                               </md-input-container>
-                              <md-input-container class="md-icon-float">
+                              <md-input-container md-no-float class="md-block">
                                 <label>Password</label>
                                 <md-icon md-font-icon="fa-key" class="fa"></md-icon> 
                                 <input name="password" type="password" required ng-model="login.password">
                                 <div ng-messages="loginForm.password.$error" ng-if='loginForm.password.$dirty'>
-                                  <div ng-message="required">Enter your password to login</div>
+                                  <div ng-message="required">Enter your password to sign in</div>
                                 </div>
                                 <div ng-messages="errors.login" ng-if='loginForm.password.$valid'>
                                   <div ng-message="invalidLogin">Sign in failed: e-mail address and password do not match</div>
                                   <div ng-message="serverFailure">Sign in failed: the playchaser server is experiencing difficulties</div>
                                 </div>
                               </md-input-container>
-                              <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="loginForm.$invalid" layout="row" layout-align="center center">
+                              <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="loginForm.$invalid" flex="none" layout="row" layout-align="center center">
                                 <md-icon md-font-icon="fa-lock" class="fa"></md-icon> 
                                <span>Sign in</span>
                              </md-button>
@@ -75,10 +75,10 @@
                     <md-tab-label>Not A Member? Sign up Now!</md-tab-label>
                     <md-tab-body>
                     <div layout="row" layout-align="center start">
-                        <md-content layout="column" layout-padding flex="100" flex-gt-md="66" flex-gt-lg="50">
+                        <md-content layout="column" layout-padding flex="100" flex-gt-md="66" flex-gt-lg="50" class="md-inline-form">
                             <h3>Create an account by entering your information below</h3>
-                            <form name="signupForm" autocomplete="on" novalidate ng-submit="doSignup(signup)">
-                              <md-input-container class="md-icon-float">
+                            <form name="signupForm" autocomplete="on" novalidate ng-submit="doSignup(signup)" layout="column">
+                              <md-input-container md-no-float class="md-block">
                                 <label>Moniker</label>
                                 <md-icon md-svg-icon="meeple"></md-icon>
                                 <input name="moniker" required ng-model="signup.moniker" ng-model-options="{ debounce : { 'default' : 500, blur : 0 } }" pc-check-user-available="moniker">
@@ -90,7 +90,7 @@
                                     <div ng-message="monikerinuse">That moniker is already in use; choose another</div>
                                 </div>
                               </md-input-container>
-                              <md-input-container class="md-icon-float">
+                              <md-input-container md-no-float class="md-block">
                                 <label>E-mail address</label>
                                 <md-icon md-font-icon="fa-envelope" class="fa"></md-icon> 
                                 <input name="username" type="email" required autofocus ng-model="signup.username" ng-model-options="{updateOn: 'blur', debounce : { 'default' : 500, blur : 0 } }" pc-check-user-available="username">
@@ -103,7 +103,7 @@
                                     <div ng-message="emailinuse">That e-mail address is already in use; choose another</div>
                                 </div>
                               </md-input-container>
-                              <md-input-container class="md-icon-float">
+                              <md-input-container md-no-float class="md-block">
                                 <label>Password</label>
                                 <md-icon md-font-icon="fa-key" class="fa"></md-icon> 
                                 <input name="password" type="password" required ng-model="signup.password">
@@ -111,7 +111,7 @@
                                   <div ng-message="required">Choose a password to use for playchaser</div>
                                 </div>
                               </md-input-container>
-                              <md-input-container class="md-icon-float">
+                              <md-input-container md-no-float class="md-block">
                                 <label>Confirm Password</label>
                                 <md-icon md-font-icon="fa-key" class="fa"></md-icon>
                                 <input name="repeatPassword" type="password" required ng-model="signup.repeatPassword" pc-must-equal="signup.password">
@@ -123,7 +123,7 @@
                                   <div ng-message="serverFailure">Sign up failed: the playchaser server is experiencing difficulties</div>
                                 </div>
                               </md-input-container>
-                              <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="signupForm.$invalid" layout="row" layout-align="center center">
+                              <md-button class="md-raised md-primary" type="submit" name="submit" value="Sign in" ng-disabled="signupForm.$invalid" layout="row" layout-align="center center" flex="none">
                                 <md-icon md-font-icon="fa-forward" class="fa"></md-icon>
                                <span>Create Account</span>
                              </md-button>
