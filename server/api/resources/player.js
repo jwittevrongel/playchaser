@@ -35,7 +35,7 @@ exports.getPlayers = function(getPlayersQueryParams) {
         if (getPlayersQueryParams.moniker) {
 			return Promise.using(connection.connectToPlayerDatabase(), function(db) {
 				var repos = playerRepository.open(db);
-				return repos.loadSingleByMoniker(getPlayersQueryParams.moniker)
+				return repos.findByMoniker(getPlayersQueryParams.moniker)
 					.then(function(player) {
 						if (player) {
 							return new ResourceResult(HttpStatus.OK, {});
@@ -50,7 +50,7 @@ exports.getPlayers = function(getPlayersQueryParams) {
 				var repos = playerRepository.open(db);
 				return identity.createPlaychaserIdentity(getPlayersQueryParams.username)
 					.then(function(id) {
-						return repos.loadSingleByIdentity(id);
+						return repos.findByIdentity(id);
 					})
 					.then(function(player) {
 						if (player) {
@@ -97,7 +97,7 @@ exports.postPlayers = function(newPlayerRequest) {
 		return resource.created(identity.createPlaychaserIdentity(newPlayerRequest.username, newPlayerRequest.password)
 			.then(function(id) {
 				newIdentity = id;
-				return repos.loadSingleByIdentity(id);
+				return repos.findByIdentity(id);
 			})
 			.then(function(player) {
 				if (player) {
@@ -107,7 +107,7 @@ exports.postPlayers = function(newPlayerRequest) {
 						message: 'There is already an account registered with that e-mail address.'
 					});
 				}
-				return repos.loadSingleByMoniker(newPlayerRequest.moniker);
+				return repos.findByMoniker(newPlayerRequest.moniker);
 			})
 			.then(function(player) {
 				if (player) {

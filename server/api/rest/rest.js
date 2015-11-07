@@ -6,6 +6,9 @@ var	HttpStatus = require('http-status-codes'),
 exports.wrapResourceJson = function(res, resourcePromise) {
 	return resourcePromise
 		.then(function(result) {
+			if (result.uri) {
+				res.location(result.uri);
+			}
 			return res.status(result.status).json(result.value);
 		})
 		.catch(ResourceError, function(resErr) {

@@ -13,7 +13,7 @@ passport.use(new LocalStrategy(
         return identity.createPlaychaserIdentity(username)
             .then(function(ident) {
                 Promise.using(connection.connectToPlayerDatabase(), function(db) {
-                    return playerRepository.open(db).loadSingleByIdentity(ident)
+                    return playerRepository.open(db).findByIdentity(ident)
                         .then(function(player) {
                             if (!player) {
                                 return false;
@@ -38,7 +38,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(_id, done) {
     return Promise.using(connection.connectToPlayerDatabase(), function(db) {
-            return playerRepository.open(db).loadSingleById(_id)
+            return playerRepository.open(db).findById(_id)
                 .nodeify(done);
         });
 });

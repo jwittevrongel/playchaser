@@ -4,7 +4,9 @@ var participant = require('./participant'),
     _ = require('lodash');
 
 function Table(owner, rulebook) {
-	this.owner = participant.create(owner);
+	if (owner) {
+		this.owner = participant.create(owner);
+	}
 	this.rulebook = rulebook;
 	this.seats = [];
 	if (this.owner) {

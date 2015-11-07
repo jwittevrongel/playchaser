@@ -56,20 +56,20 @@ PlayerRepository.prototype.removeByIdentity = function(identity) {
 	});
 };
 
-PlayerRepository.prototype.loadSingleById = function(id) {
+PlayerRepository.prototype.findById = function(id) {
 	return this.hydrateOne(player.create, this._collection.findOneAsync({ 
 		"_id" : new mongodb.ObjectID(id) 
 	})).then(hydrateIdentity);
 };
 
-PlayerRepository.prototype.loadSingleByIdentity = function(identity) {
+PlayerRepository.prototype.findByIdentity = function(identity) {
 	return this.hydrateOne(player.create, this._collection.findOneAsync({
 		"identity.idp": identity.idp,
 		"identity.idpUsername": identity.idpUsername
 	})).then(hydrateIdentity);
 };
 
-PlayerRepository.prototype.loadSingleByMoniker = function(moniker) {
+PlayerRepository.prototype.findByMoniker = function(moniker) {
 	return this.hydrateOne(player.create, this._collection.findOneAsync({
 		"profile.public.moniker": moniker
 	})).then(hydrateIdentity);

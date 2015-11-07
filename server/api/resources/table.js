@@ -5,7 +5,8 @@ var tableRepository = require('../../db/repository/table'),
     Promise = require('bluebird'),
     connection = require('../../db/connection'),
 	resource = require('./'),
-	rulebookResource = require('./rulebook');
+	rulebookResource = require('./rulebook'),
+	_ = require('lodash');
 
 exports.postTables = function(newTable, owner, baseUri) {
 	if (!newTable.rulebook || !newTable.rulebook._id) {
@@ -25,6 +26,25 @@ exports.postTables = function(newTable, owner, baseUri) {
 	});
 };
 
-// exports.getTables = function(queryParams) {
-// 		
-// };
+exports.getTables = function(parameters, participant) {
+	if (!parameters.open && !parameters.mine) {
+		parameters.open = parameters.mine = true;
+	}
+	
+	return Promise.using(connection.connectToGameRoomDatabase(), function(db) {
+		var promises = [];
+		var repos = tableRepository.open(db);
+		if (parameters.open) {
+			promises.push(repos.findOpen(parameters.rulebook));
+		}
+		if (parameters.mine) {
+			promises.push(repos.findByParticipant(participant, parameters.rulebook));
+		}
+		
+		return Promise.all(promises).then(function(results) {
+			return resource.ok(_.uniq(_.flatten(results), function(table) {
+				return table._id;
+			}));
+		});
+	});
+};
