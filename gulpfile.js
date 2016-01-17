@@ -38,10 +38,9 @@ gulp.task('all-jshint', function() {
 
 gulp.task('all-jscs', function() {
   return gulp.src(allJavascriptSources)
-    .pipe(jscs({fix: true}))
+    .pipe(jscs())
     .pipe(jscs.reporter())
-    .pipe(jscs.reporter('fail'))
-    .pipe(gulp.dest('.'));
+    .pipe(jscs.reporter('fail'));
 });
 
 var lessSourcesAll = ['client/css/*.less'];
